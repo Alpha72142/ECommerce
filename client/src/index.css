@@ -1,0 +1,59 @@
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,700&family=Poppins:wght@300;400&display=swap");
+@import "tailwindcss";
+
+
+@theme {
+  --breakpoint-ls: 420px;
+  --breakpoint-ms: 375px;
+}
+
+/* * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+} */
+
+/* font-family: "Poppins", serif;*/
+/* font-family: "Playfair", serif;*/
+
+/* // navbar css */
+
+.navbar-header {
+  font-family: "Poppins", sans-serif;
+  font-size: 17px;
+  line-height: 26px;
+  text-transform: uppercase;
+  box-shadow: 0 8px 6px -6px rgb(183, 183, 183);
+  --webkit-box-shadow: 0 8px 6px -6px rgb(183, 183, 183);
+}
+
+
+
+/* .nav-link {
+  position: relative;
+  text-decoration: none;
+}
+
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 100%;
+  height: 2px;
+  background-color: black;
+  transform: scaleX(0);
+  transition: transform 0.3s ease-in-out;
+}
+
+.active::after {
+  transform: scaleX(1);
+} */
+
+
+
+.font-header{
+    font-family: 'roboto',sans-serif;
+    font-weight: 700;
+    letter-spacing: 3px;
+} 
