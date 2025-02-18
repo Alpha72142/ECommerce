@@ -10,6 +10,7 @@ const Layout = ({
   description = "Ecommerce App",
   keywords = "Ecommerce, React, JavaScript, Tailwind CSS, Node.js, Express, MongoDB",
   author = "Alphatech",
+  className = "" ,
 }) => {
   return (
     <HelmetProvider>
@@ -22,7 +23,7 @@ const Layout = ({
           <title>{title}</title>
         </Helmet>
         <Header />
-        <main className="flex-grow">
+        <main className={`flex-1 bg-gray-100 p-4 ${className}`}>
           <Toaster />
           {children}
         </main>
@@ -38,6 +39,7 @@ Layout.propTypes = {
   description: PropTypes.string,
   keywords: PropTypes.string,
   author: PropTypes.string,
+  className: PropTypes.string,
 };
 
 export default Layout;

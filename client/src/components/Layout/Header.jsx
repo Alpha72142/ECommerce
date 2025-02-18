@@ -3,7 +3,6 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import logo from "../../assets/shopping_ogo.jpg";
 import { useAuth } from "../../context/auth";
 import { toast } from "react-hot-toast";
-import { set } from "mongoose";
 
 const Header = () => {
   const { auth, setAuth } = useAuth();
@@ -149,7 +148,7 @@ const Header = () => {
                   >
                     <div className="py-1" role="none">
                       <NavLink
-                        to="/dashboard"
+                        to={`/dashboard/${auth?.user?.role === 1 ? "admin" : "user"}`}
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                         onClick={closeMenu}
                       >
@@ -201,7 +200,7 @@ const Header = () => {
             </div>
             {[
               { path: "/", label: "Home" },
-              {path: "/dashboard", label: "Dashboard"},
+              {path: `/dashboard/${auth?.user?.role === 1 ? "admin" : "user"}`, label: "Dashboard"},
               { path: "/category", label: "Category" },
               { path: "/cart", label: "cart (0)" },
             ].map((item) => (

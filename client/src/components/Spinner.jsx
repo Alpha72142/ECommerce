@@ -1,7 +1,8 @@
+import PropTypes from "prop-types";
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
-const Spinner = () => {
+const Spinner = ({ path = "login" }) => {
   const [count, setCount] = useState(2);
   const navigate = useNavigate();
   const location = useLocation();
@@ -10,22 +11,22 @@ const Spinner = () => {
     const interval = setInterval(() => {
       setCount((prevValue) => --prevValue);
     }, 1000);
-count === 0 && navigate("/login",{
-  state: location.pathname
-});
+    count === 0 &&
+      navigate(`/${path}`, {
+        state: location.pathname,
+      });
     return () => clearInterval(interval);
-  }, [count, navigate, location]);
+  }, [count, navigate, location, path]);
 
   return (
     <div className="w-full h-screen items-center block p-6 bg-white  dark:bg-gray-800 dark:border-gray-800 dark:hover:bg-gray-700">
-
       <div
         role="status"
         className="flex flex-col gap-6 items-center justify-center w-full h-full"
       >
-      <h1 className="text-2xl font-bold text-center text-gray-800 dark:text-gray-200">
-      Redirecting you in {count} seconds
-    </h1>
+        <h1 className="text-2xl font-bold text-center text-gray-800 dark:text-gray-200">
+          Redirecting you in {count} seconds
+        </h1>
         <svg
           aria-hidden="true"
           className="w-16 h-16 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
@@ -46,6 +47,10 @@ count === 0 && navigate("/login",{
       </div>
     </div>
   );
+};
+
+Spinner.propTypes = {
+  path: PropTypes.string,
 };
 
 export default Spinner;

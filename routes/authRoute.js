@@ -7,7 +7,7 @@ import {
   verifyOTPController,
   resetPasswordController,
 } from "../controllers/authController.js";
-import { isAdmin, requireSignIn } from "../middlewares/authMiddleware.js";
+import { isAdmin, isUser, requireSignIn } from "../middlewares/authMiddleware.js";
 
 //router object
 const router = express.Router();
@@ -30,10 +30,13 @@ router.post("/verify-otp", verifyOTPController);
 // Reset Password
 router.post("/reset-password", resetPasswordController);
 
+//iuser route auth
+router.get("/user-auth", requireSignIn, isUser, (req, res) => {
+  res.status(200).send({ ok: true });
+});
 
-
-//prtected route auth
-router.get("/user-auth", requireSignIn, (req, res) => {
+//admin auth route
+router.get("/admin-auth", requireSignIn, isAdmin, (req, res) => {
   res.status(200).send({ ok: true });
 });
 

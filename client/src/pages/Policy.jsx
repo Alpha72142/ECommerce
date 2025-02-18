@@ -3,7 +3,7 @@ import Layout from "../components/Layout/Layout";
 const Policy = () => {
   return (
     <Layout title="Privacy Policy">
-      <div className="max-w-5xl mx-auto px-6 py-12 bg-gray-100 rounded-lg shadow-md min-h-[calc(100vh-8.55rem)] ">
+      <div className="max-w-5xl mx-auto px-6 py-12 bg-gray-100 rounded-lg shadow-md ">
         <h1 className="text-5xl font-extrabold text-center text-slate-900 mb-6">
           Privacy Policy
         </h1>
