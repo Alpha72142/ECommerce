@@ -3,6 +3,7 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import logo from "../../assets/shopping_ogo.jpg";
 import { useAuth } from "../../context/auth";
 import { toast } from "react-hot-toast";
+import { FiLogOut } from "react-icons/fi";
 
 const Header = () => {
   const { auth, setAuth } = useAuth();
@@ -140,7 +141,7 @@ const Header = () => {
                 </div>
                 {isUserOpen && (
                   <div
-                    className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white ring-1 shadow-lg ring-black/5 focus:outline-hidden"
+                    className="absolute right-2 z-10 mt-2 w-56 origin-top-right rounded-md bg-white ring-1 shadow-lg ring-black/5 focus:outline-hidden"
                     role="menu"
                     aria-orientation="vertical"
                     aria-labelledby="menu-button"
@@ -160,9 +161,10 @@ const Header = () => {
                           e.preventDefault(); // Prevent NavLink's default behavior
                           handleLogout(); // Call logout function
                         }}
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center justify-between"
                       >
                         Logout
+                        <FiLogOut/>
                       </NavLink>
                     </div>
                   </div>
@@ -298,9 +300,10 @@ const Header = () => {
                     e.preventDefault(); // Prevent NavLink's default behavior
                     handleLogout(); // Call logout function
                   }}
-                  className="relative px-4 py-2"
+                  className="relative px-4 py-2 flex items-center justify-between"
                 >
                   Logout
+                  <FiLogOut/>
                 </NavLink>
               </li>
             )}
