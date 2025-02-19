@@ -12,10 +12,10 @@ const Dashboard = () => {
             <UserMenu />
           </div>
           <div className="col-span-9">
-            <div className="max-w-[75%] p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
-            <h3 className="mb-2 text-2xl tracking-tight text-gray-900 dark:text-white">Name : {auth?.user?.name}</h3>
-            <h3 className="mb-2 text-2xl tracking-tight text-gray-900 dark:text-white">Email : {auth?.user?.email}</h3>
-            <h3 className="mb-2 text-2xl tracking-tight text-gray-900 dark:text-white">Contact : {auth?.user?.phone}</h3>
+            <div className="max-w-[75%] p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
+            <h3 className="mb-2 text-2xl tracking-tight text-gray-900">Name : {auth?.user?.name}</h3>
+            <h3 className="mb-2 text-2xl tracking-tight text-gray-900">Email : {auth?.user?.email}</h3>
+            <h3 className="mb-2 text-2xl tracking-tight text-gray-900">Contact : {auth?.user?.phone}</h3>
             </div>
           </div>
         </div>
