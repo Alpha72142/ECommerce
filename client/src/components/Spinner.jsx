@@ -19,17 +19,17 @@ const Spinner = ({ path = "login" }) => {
   }, [count, navigate, location, path]);
 
   return (
-    <div className="w-full h-screen items-center block p-6 bg-white  dark:bg-gray-800 dark:border-gray-800 dark:hover:bg-gray-700">
+    <div className="w-full h-screen items-center block p-6 bg-gray-800 border-gray-800 hover:bg-gray-700">
       <div
         role="status"
         className="flex flex-col gap-6 items-center justify-center w-full h-full"
       >
-        <h1 className="text-2xl font-bold text-center text-gray-800 dark:text-gray-200">
+        <h1 className="text-2xl font-bold text-center  text-gray-200">
           Redirecting you in {count} seconds
         </h1>
         <svg
           aria-hidden="true"
-          className="w-16 h-16 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+          className="w-16 h-16  animate-spin text-gray-600 fill-blue-600"
           viewBox="0 0 100 101"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"

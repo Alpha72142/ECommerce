@@ -133,9 +133,9 @@ const Header = () => {
               <li className="p-1 text-sm text-slate-600">
                 <div
                   onClick={() => setIsUserOpen(!isUserOpen)}
-                  className="relative inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600"
+                  className="relative inline-flex items-center justify-center w-10 h-10 overflow-hidden rounded-full bg-gray-600"
                 >
-                  <span className="font-medium text-gray-600 dark:text-gray-300">
+                  <span className="font-medium text-gray-300">
                     {auth.user.name[0]} 
                   </span>
                 </div>
@@ -195,8 +195,8 @@ const Header = () => {
             ✖
           </button>
           <ul className="flex flex-col p-6 gap-4">
-            <div className="relative inline-flex items-center justify-center w-18 h-18 mx-auto overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">
-              <span className="font-medium text-gray-600 dark:text-gray-300">
+            <div className="relative inline-flex items-center justify-center w-18 h-18 mx-auto overflow-hidden rounded-full bg-gray-600">
+              <span className="font-medium text-gray-300">
                 JL
               </span>
             </div>
