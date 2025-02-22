@@ -22,8 +22,8 @@ const CreateCategory = () => {
       const { data } = await axios.get(
         `${import.meta.env.VITE_API_URL}/api/v1/category/get-category`
       );
-      if (data.success) {
-        setCategories(data.category);
+      if (data?.success) {
+        setCategories(data?.category);
       }
     } catch (error) {
       console.error(error);
@@ -125,7 +125,7 @@ const CreateCategory = () => {
 
   return (
     <Layout title="Dashboard - Manage Category">
-      <div className="container mx-auto p-2">
+      <div className="container">
         <div className="flex gap-4">
           {/* Sidebar */}
           <div className="w-1/4">

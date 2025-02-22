@@ -7,6 +7,29 @@
   --breakpoint-ms: 375px;
 }
 
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+  /* Controls width */
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  /* Light gray background */
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  /* Scrollbar color */
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+  /* Darker on hover */
+}
+
 /* * {
   margin: 0;
   padding: 0;
