@@ -30,6 +30,17 @@ const AdminMenu = () => {
       >
         Create Product
       </NavLink>
+      <NavLink
+        to="/dashboard/admin/products"
+        className={({ isActive }) =>
+          `block w-full px-4 py-2 border-b  cursor-pointer 
+             border-gray-600 
+           hover:bg-cyan-900 hover:text-white 
+           ${isActive ? "bg-cyan-900 text-white" : ""}`
+        }
+      >
+        Products
+      </NavLink>
 
       <NavLink
         to="/dashboard/admin/users"

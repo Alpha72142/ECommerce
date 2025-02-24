@@ -3,12 +3,15 @@ import AdminMenu from "../../components/Layout/AdminMenu";
 import Layout from "../../components/Layout/Layout";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { BiSolidImageAdd, BiSolidPlusCircle } from "react-icons/bi";
-import { Select } from "antd";
-import { useNavigate } from "react-router-dom";
+import { GrUpdate } from "react-icons/gr";
+import { MdDelete } from "react-icons/md";
+import { BiSolidImageAdd } from "react-icons/bi";
+import { Modal, Select } from "antd";
+import { useNavigate, useParams } from "react-router-dom";
 
-const CreateProduct = () => {
+const UpdateProduct = () => {
   const navigate = useNavigate();
+  const params = useParams();
   const [categories, setCategories] = useState([]);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -16,29 +19,52 @@ const CreateProduct = () => {
   const [category, setCategory] = useState("");
   const [quantity, setQuantity] = useState("");
   const [shipping, setShipping] = useState("");
-  const [photo, setPhoto] = useState("");
+  const [photo, setPhoto] = useState(null);
   const dropdownRef = useRef(null);
   const [isDropOpen, setIsDropOpen] = useState(false);
   const [isShippingDropdownOpen, setIsShippingDropdownOpen] = useState(false);
+  const [id, setId] = useState("");
+   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const getSingleProduct = async () => {
+    try {
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/v1/product/get-single-product/${
+          params.slug
+        }`
+      );
+      setName(data.product.name);
+      setCategory(data.product.category);
+      setId(data.product._id);
+      setDescription(data.product.description);
+      setPrice(data.product.price);
+      setQuantity(data.product.quantity);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getAllCategory = async () => {
+    try {
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/v1/category/get-category`
+      );
+      if (data?.success) {
+        setCategories(data.category);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Error fetching categories");
+    }
+  };
 
   useEffect(() => {
-    const getAllCategory = async () => {
-      try {
-        const { data } = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/v1/category/get-category`
-        );
-        if (data?.success) {
-          setCategories(data.category);
-        }
-      } catch (error) {
-        console.error(error);
-        toast.error("Error fetching categories");
-      }
-    };
+    console.log(category);
+    getSingleProduct();
     getAllCategory();
   }, []);
 
-  const handleCreate = async (e) => {
+  const handleUpdate = async (e) => {
     e.preventDefault();
     try {
       const productData = new FormData();
@@ -46,26 +72,47 @@ const CreateProduct = () => {
       productData.append("description", description);
       productData.append("price", price);
       productData.append("quantity", quantity);
-      productData.append("shipping", shipping);
-      productData.append("photo", photo);
-      productData.append("category", category);
+      productData.append("shipping", shipping ? "true" : "false");
+      photo && productData.append("photo", photo);
+      productData.append("category", category._id);
+      console.log("FormData contents:",category._id);
 
-      const { data } = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/v1/product/create-product`,
+
+      const { data } = await axios.put(
+        `${import.meta.env.VITE_API_URL}/api/v1/product/update-product/${id}`,
         productData
       );
 
       if (data?.success) {
-        toast.success("Product Created Successfully");
+        toast.success("Product Updated Successfully");
         navigate("/dashboard/admin/products");
       } else {
         toast.error(data?.message);
       }
     } catch (error) {
       console.log(error);
-      toast.error("Something went wrong in creating the product");
+      toast.error("Something went wrong in updating the product");
     }
   };
+
+  //delete product
+  const deleteProduct = async (req, res) => {
+    try{
+      const { data } = await axios.delete(
+        `${import.meta.env.VITE_API_URL}/api/v1/product/delete-product/${id}`
+      );
+      toast.success("Product deleted successfully");
+      navigate("/dashboard/admin/products");
+      setIsModalOpen(false); // Close the modal
+    }catch(error){
+        console.log(error);
+        toast.error("Something went wrong in deleting the product");
+    }
+  }
+
+    const showModel = () => {
+      setIsModalOpen(true);
+    };
 
   return (
     <Layout title="Dashboard - Create Product">
@@ -81,7 +128,7 @@ const CreateProduct = () => {
             <div className="mt-2 p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
               <div className="flex flex-col md:flex-row justify-between items-center">
                 <h3 className="text-xl md:text-2xl text-gray-900 font-semibold">
-                  Create Product
+                  Update Product
                 </h3>
 
                 <div
@@ -94,6 +141,7 @@ const CreateProduct = () => {
                     showSearch
                     className="w-full"
                     onChange={(value) => setCategory(value)}
+                    value={category._id}
                     onDropdownVisibleChange={(open) => setIsDropOpen(open)}
                     suffixIcon={
                       <svg
@@ -123,10 +171,20 @@ const CreateProduct = () => {
 
               {/* Image Upload */}
               <div className="flex flex-col md:flex-row gap-6 py-4">
-                {photo && (
+                {photo ? (
                   <div className="w-full md:w-1/3 h-48 overflow-hidden border border-gray-300 rounded-lg">
                     <img
                       src={URL.createObjectURL(photo)}
+                      alt="product_image"
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                ) : (
+                  <div className="w-full md:w-1/3 h-48 overflow-hidden border border-gray-300 rounded-lg">
+                    <img
+                      src={`${
+                        import.meta.env.VITE_API_URL
+                      }/api/v1/product/product-photo/${id}`}
                       alt="product_image"
                       className="w-full h-full object-contain"
                     />
@@ -186,6 +244,7 @@ const CreateProduct = () => {
                   showSearch
                   className="w-full md:w-1/3 bg-gray-50 border border-gray-300 rounded-lg"
                   onChange={(value) => setShipping(value)}
+                  value={shipping ? "yes" : "no"}
                   onDropdownVisibleChange={(open) =>
                     setIsShippingDropdownOpen(open)
                   }
@@ -209,21 +268,40 @@ const CreateProduct = () => {
                   <Select.Option value="0">No</Select.Option>
                   <Select.Option value="1">Yes</Select.Option>
                 </Select>
-
-                <button
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-lg flex items-center gap-2 mt-4 md:mt-0"
-                  onClick={handleCreate}
-                >
-                  <BiSolidPlusCircle className="w-5 h-5" />
-                  CREATE PRODUCT
-                </button>
+                <div className="flex gap-5">
+                  <button
+                    className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-lg flex items-center gap-2 mt-4 md:mt-0"
+                    onClick={handleUpdate}
+                  >
+                    <GrUpdate className="w-4 h-4" />
+                    UPDATE
+                  </button>
+                  <button
+                    className="bg-red-600 hover:bg-red-700 text-white font-medium px-6 py-2 rounded-lg flex items-center gap-2 mt-4 md:mt-0"
+                    onClick={() => showModel()}
+                  >
+                    <MdDelete className="w-5 h-5" />
+                    DELETE
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         </div>
+        <Modal
+          title="Confirm Delete"
+          open={isModalOpen}
+          onOk={deleteProduct} // Calls API when OK is clicked
+          onCancel={() => setIsModalOpen(false)} // Closes the modal
+          okText="Delete"
+          cancelText="Cancel"
+          okButtonProps={{ danger: true }}
+        >
+          <p>Are you sure you want to delete this category?</p>
+        </Modal>
       </div>
     </Layout>
   );
 };
 
-export default CreateProduct;
+export default UpdateProduct;

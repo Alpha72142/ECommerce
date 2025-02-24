@@ -6,12 +6,12 @@ const AdminDashboard = () => {
   return (
     <Layout title="Admin Dashboard - Ecommerce app">
       <div className="container">
-        <div className="grid grid-rows-1 grid-cols-12 gap-4">
-          <div className="col-span-3">
+        <div className="flex gap-4">
+          <div className="w-1/4">
             <AdminMenu />
           </div>
-          <div className="col-span-9">
-            <div className="max-w-[75%] mt-2 p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
+          <div className="w-3/4">
+            <div className="mt-2 p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
               <h3 className="mb-2 text-2xl tracking-tight text-gray-900 ">
                 Admin Name : {auth?.user?.name}
               </h3>

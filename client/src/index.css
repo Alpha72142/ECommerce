@@ -9,12 +9,12 @@
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 4px;
+  width: 4px !important;
   /* Controls width */
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: #f1f1f100;
   /* Light gray background */
   border-radius: 10px;
 }
@@ -26,7 +26,7 @@
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: #555555;
   /* Darker on hover */
 }
 
