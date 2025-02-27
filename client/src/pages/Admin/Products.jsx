@@ -28,14 +28,14 @@ const Products = () => {
 
   return (
     <Layout title="Dashboard - Products">
-      <div className="container">
+      <div className="container p-4">
         <div className="flex gap-4">
           <div className="w-1/4">
             <AdminMenu />
           </div>
           <div className="w-3/4">
-            <div className="mt-2 p-6 bg-white border border-gray-200 rounded-lg shadow-sm ">
-              <h3 className="mb-2 text-2xl tracking-tight text-gray-900 ">
+            <div className="mt-2 p-6 bg-white border border-gray-200 rounded-lg shadow-lg ">
+              <h3 className="text-3xl font-semibold text-gray-800">
                 All Product List
               </h3>
               <div className="flex justify-baseline gap-10 flex-wrap mt-10">
@@ -44,23 +44,29 @@ const Products = () => {
                     <Link
                       to={`/dashboard/admin/product/${p.slug}`}
                       key={p._id}
-                      className="w-65 h-80 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700"
+                      className="w-65 h-78 rounded-lg bg-gray-100 border border-gray-200 hover:shadow-lg"
                     >
-                      <img
-                        className="rounded-t-xl h-3/5"
-                        src={`${
-                          import.meta.env.VITE_API_URL
-                        }/api/v1/product/product-photo/${p._id}`}
-                        alt={p.name}
-                      />
+                      <div className="relative h-3/5 bg-white rounded-t-lg flex justify-around p-1">
+                        <img
+                          className="rounded-t-lg h-full p-2"
+                          src={`${
+                            import.meta.env.VITE_API_URL
+                          }/api/v1/product/product-photo/${
+                            p._id
+                          }?t=${Date.now()}`}
+                          alt={p.name}
+                        />
+                      </div>
 
                       <div className="p-4">
-                        <h5 className="mb-2 text-xl font-bold tracking-tight text-gray-900 dark:text-white">
-                          {p.name}
-                        </h5>
+                        <div className="relative w-full overflow-hidden">
+                          <h5 className="animate-marquee mb-2 text-md font-bold tracking-tight text-gray-600  whitespace-nowrap transition-transform duration-500 ease-in-out group-hover:-translate-x-1/2">
+                            {p.name}
+                          </h5>
+                        </div>
 
-                        <p className="mb-4 h-14 font-normal text-sm text-gray-700 dark:text-gray-400 line-clamp-3">
-                          {p.description}
+                        <p className="mb-4 h-14 font-normal text-sm text-gray-500 ">
+                          {p.description.substring(0, 60)}...
                         </p>
                       </div>
                     </Link>

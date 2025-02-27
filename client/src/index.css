@@ -1,10 +1,20 @@
 @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,700&family=Poppins:wght@300;400&display=swap");
 @import "tailwindcss";
 
-
 @theme {
   --breakpoint-ls: 420px;
   --breakpoint-ms: 375px;
+}
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+.animate-marquee:hover {
+  animation: marquee 3s linear infinite;
 }
 
 /* Custom Scrollbar */
@@ -51,32 +61,12 @@
 }
 
 
-
-/* .nav-link {
-  position: relative;
-  text-decoration: none;
+.font-header {
+  font-family: "roboto", sans-serif;
+  font-weight: 700;
+  letter-spacing: 3px;
 }
 
-.nav-link::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: -2px;
-  width: 100%;
-  height: 2px;
-  background-color: black;
-  transform: scaleX(0);
-  transition: transform 0.3s ease-in-out;
+.ant-checkbox-inner{
+  border-radius: 100% !important;
 }
-
-.active::after {
-  transform: scaleX(1);
-} */
-
-
-
-.font-header{
-    font-family: 'roboto',sans-serif;
-    font-weight: 700;
-    letter-spacing: 3px;
-} 

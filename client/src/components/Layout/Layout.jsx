@@ -23,7 +23,7 @@ const Layout = ({
           <title>{title}</title>
         </Helmet>
         <Header />
-        <main className={`flex-1 bg-gray-100 p-4 ${className}`}>
+        <main className={`flex-1 bg-gray-100 ${className}`}>
           <Toaster />
           {children}
         </main>

@@ -2,12 +2,13 @@ import express from "express";
 import { isAdmin, requireSignIn } from "../middlewares/authMiddleware.js";
 import {
   categoryController,
+  categoryPhotoController,
   createCategoryController,
   deleteCategoryController,
   singleCategoryController,
   updateCategoryController,
 } from "../controllers/categoryController.js";
-
+import formidable from "express-formidable";
 const router = express.Router();
 
 //routes
@@ -15,14 +16,19 @@ const router = express.Router();
 router.post(
   "/create-category",
   requireSignIn,
+  formidable(),
   isAdmin,
   createCategoryController
 );
+
+//get photos
+router.get("/category-photo/:id", categoryPhotoController);
 
 //update category
 router.put(
   "/update-category/:id",
   requireSignIn,
+  formidable(),
   isAdmin,
   updateCategoryController
 );

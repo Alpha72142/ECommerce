@@ -5,8 +5,17 @@ import fs from "fs";
 // create a new product
 export const createProductController = async (req, res) => {
   try {
-    const { name, slug, description, price, category, quantity, shipping } =
-      req.fields;
+    const {
+      name,
+      slug,
+      description,
+      price,
+      discount,
+      discountPrice,
+      category,
+      quantity,
+      shipping,
+    } = req.fields;
     const { photo } = req.files;
 
     //Validation
@@ -134,8 +143,17 @@ export const deleteProductController = async (req, res) => {
 // update product
 export const updateProductController = async (req, res) => {
   try {
-    const { name, slug, description, price, category, quantity, shipping } =
-      req.fields;
+    const {
+      name,
+      slug,
+      description,
+      price,
+      discount,
+      discountPrice,
+      category,
+      quantity,
+      shipping,
+    } = req.fields;
     const { photo } = req.files;
 
     //Validation
@@ -176,6 +194,87 @@ export const updateProductController = async (req, res) => {
     res.status(500).send({
       success: false,
       message: "Error in update product",
+      error,
+    });
+  }
+};
+
+// filter by category ,price  and price range
+export const productFilterController = async (req, res) => {
+  try {
+    const { checked, radio, priceRange } = req.body;
+    let args = {};
+
+    if (checked.length > 0) args.category = checked;
+
+    if (radio.length > 0) {
+      args.discountPrice = { $gte: radio[0], $lte: radio[1] };
+    } else {
+      let [min, max] = priceRange;
+
+      // Ensure min and max are numbers and handle missing values
+      min = min !== null && !isNaN(min) ? Number(min) : 0;
+      max = max !== null && !isNaN(max) ? Number(max) : 100000; // Large value if max is missing
+
+      args.discountPrice = { $gte: min, $lte: max };
+    }
+
+    const product = await productModel.find(args);
+
+    res.status(200).send({
+      success: true,
+      product,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({
+      success: false,
+      message: "Error in filtering products",
+      error,
+    });
+  }
+};
+
+//product count
+export const productCountController = async (req, res) => {
+  try {
+    const total = await productModel.find({}).estimatedDocumentCount();
+    console.log(total);
+    res.status(200).send({
+      success: true,
+      total,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({
+      success: false,
+      message: "Error in product count",
+      error,
+    });
+  }
+};
+
+// product list base on page
+
+export const productListController = async (req,res) => {
+  try {
+    const perPage = 8;
+    const page = req.params.page ? req.params.page : 1;
+    const products = await productModel
+      .find({})
+      .select("-photo")
+      .skip((page - 1) * perPage)
+      .limit(perPage)
+      .sort({ createdAt: -1 });
+      res.status(200).send({
+        success: true,
+        products
+      })
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({
+      success: false,
+      message: "Error in product list",
       error,
     });
   }

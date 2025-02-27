@@ -13,6 +13,8 @@ const CreateProduct = () => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
+  const [discount, setDiscount] = useState("");
+  const [discountPrice, setDiscountPrice] = useState("");
   const [category, setCategory] = useState("");
   const [quantity, setQuantity] = useState("");
   const [shipping, setShipping] = useState("");
@@ -45,10 +47,13 @@ const CreateProduct = () => {
       productData.append("name", name);
       productData.append("description", description);
       productData.append("price", price);
+      productData.append("discount", 0);
+      productData.append("discountPrice", price-(price * discount/100 ));
       productData.append("quantity", quantity);
       productData.append("shipping", shipping);
       productData.append("photo", photo);
       productData.append("category", category);
+
 
       const { data } = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/v1/product/create-product`,
@@ -69,7 +74,7 @@ const CreateProduct = () => {
 
   return (
     <Layout title="Dashboard - Create Product">
-      <div className="container mx-auto">
+      <div className="container mx-auto p-4">
         <div className="flex flex-col md:flex-row gap-4">
           {/* Sidebar */}
           <div className="hidden md:block md:w-1/4">
@@ -78,9 +83,9 @@ const CreateProduct = () => {
 
           {/* Main Content */}
           <div className="w-full md:w-3/4">
-            <div className="mt-2 p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
+            <div className="mt-2 p-6 bg-white border border-gray-200 rounded-lg shadow-lg">
               <div className="flex flex-col md:flex-row justify-between items-center">
-                <h3 className="text-xl md:text-2xl text-gray-900 font-semibold">
+                <h3 className="text-3xl font-semibold text-gray-800">
                   Create Product
                 </h3>
 
@@ -167,6 +172,21 @@ const CreateProduct = () => {
                   placeholder="Product Quantity"
                   className="w-full h-12 bg-gray-50 border outline-none border-gray-300 rounded-lg p-3"
                   onChange={(e) => setQuantity(e.target.value)}
+                />
+
+                <input
+                  type="number"
+                  value={discount}
+                  placeholder="Product Discount (Optional)"
+                  className="w-full h-12 bg-gray-50 border outline-none border-gray-300 rounded-lg p-3"
+                  onChange={(e) => {
+                    let value = parseInt(e.target.value, 10);
+                    if (value > 100) value = 100; // Prevent values above 100
+                    if (value < 0 || isNaN(value)) value = 0; // Prevent negative values
+                    setDiscount(value);
+                  }}
+                  min="0"
+                  max="100"
                 />
               </div>
 

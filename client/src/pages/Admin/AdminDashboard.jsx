@@ -5,7 +5,7 @@ const AdminDashboard = () => {
   const { auth } = useAuth();
   return (
     <Layout title="Admin Dashboard - Ecommerce app">
-      <div className="container">
+      <div className="container p-4">
         <div className="flex gap-4">
           <div className="w-1/4">
             <AdminMenu />

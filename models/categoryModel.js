@@ -10,5 +10,9 @@ const categorySchema = new mongoose.Schema({
     type: String,
     lowercase: true,
   },
+  photo: {
+    data: Buffer,
+    contentType: String,
+  },
 });
 export default mongoose.model("Category", categorySchema);
