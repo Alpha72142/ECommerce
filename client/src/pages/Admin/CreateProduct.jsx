@@ -77,7 +77,7 @@ const CreateProduct = () => {
       <div className="container mx-auto p-4">
         <div className="flex flex-col md:flex-row gap-4">
           {/* Sidebar */}
-          <div className="hidden md:block md:w-1/4">
+          <div className="w-full md:w-1/4">
             <AdminMenu />
           </div>
 

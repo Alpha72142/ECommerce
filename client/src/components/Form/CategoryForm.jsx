@@ -4,17 +4,20 @@ import { FaPlus } from "react-icons/fa";
 
 const CategoryForm = ({ handleSubmit, value, setValue, setPhoto, photo }) => {
   return (
-    <form onSubmit={handleSubmit} className="flex gap-4 items-center">
-      {/* File Upload + Preview (Compact) */}
-      <label className="w-10 h-10 cursor-pointer flex items-center justify-center bg-gray-50 text-blue-500 border border-gray-300 rounded-sm overflow-hidden relative hover:bg-gray-200">
+    <form
+      onSubmit={handleSubmit}
+      className="flex flex-wrap gap-4 items-center justify-center md:justify-start"
+    >
+      {/* File Upload + Preview (Responsive) */}
+      <label className="w-full h-20 sm:w-10 sm:h-10 cursor-pointer flex items-center justify-center bg-gray-50 text-blue-500 border border-gray-300 rounded-sm overflow-hidden relative hover:bg-gray-200">
         {photo ? (
           <img
             src={URL.createObjectURL(photo)}
             alt="category_image"
-            className="absolute w-full h-full object-fill"
+            className="w-full h-full object-cover"
           />
         ) : (
-          <BiSolidImageAdd className="w-4 h-4" />
+          <BiSolidImageAdd className="w-12 h-12 sm:w-5 sm:h-5" />
         )}
         <input
           type="file"
@@ -29,7 +32,7 @@ const CategoryForm = ({ handleSubmit, value, setValue, setPhoto, photo }) => {
       <input
         type="text"
         placeholder="Enter category"
-        className="p-2 rounded-lg bg-gray-50 border border-gray-200 outline-none w-60"
+        className="p-2 rounded-lg bg-gray-50 border border-gray-200 outline-none w-full sm:w-60"
         value={value}
         onChange={(e) => setValue(e.target.value)}
       />
@@ -37,9 +40,9 @@ const CategoryForm = ({ handleSubmit, value, setValue, setPhoto, photo }) => {
       {/* Submit Button */}
       <button
         type="submit"
-        className="bg-blue-600 flex items-center gap-2 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 transition"
+        className="bg-blue-600 flex items-center gap-2 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition w-full sm:w-auto"
       >
-       <FaPlus/> CREATE CATEGORY
+        <FaPlus /> CREATE CATEGORY
       </button>
     </form>
   );

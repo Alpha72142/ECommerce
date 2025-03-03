@@ -19,12 +19,16 @@ import Users from "./pages/Admin/Users";
 import Profile from "./pages/user/Profile";
 import Orders from "./pages/user/Orders";
 import Products from "./pages/Admin/Products";
+import Search from "./pages/Search";
+import ProductDetails from "./pages/ProductDetails";
 
 function App() {
   return (
     <>
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/product/:slug" element={<ProductDetails />} />
+        <Route path="/search" element={<Search />} />
         <Route path="/dashboard" element={<PrivateRoute />}>
           <Route path="user" element={<Dashboard />} />
           <Route path="user/profile" element={<Profile />} />
@@ -34,10 +38,7 @@ function App() {
           <Route path="admin" element={<AdminDashboard />} />
           <Route path="admin/create_category" element={<CreateCategory />} />
           <Route path="admin/create_product" element={<CreateProduct />} />
-          <Route
-            path="admin/product/:slug"
-            element={<UpdateProducts />}
-          />
+          <Route path="admin/product/:slug" element={<UpdateProducts />} />
           <Route path="admin/products" element={<Products />} />
           <Route path="admin/users" element={<Users />} />
         </Route>

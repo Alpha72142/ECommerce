@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 const Products = () => {
   const [products, setProducts] = useState([]);
 
-  // get all products
+  // Fetch all products
   const getAllProducts = async () => {
     try {
       const { data } = await axios.get(
@@ -17,11 +17,10 @@ const Products = () => {
       setProducts(data.products);
     } catch (error) {
       console.log(error);
-      toast.error("Something went wrong while getting product");
+      toast.error("Something went wrong while getting products");
     }
   };
 
-  // life cycle methods
   useEffect(() => {
     getAllProducts();
   }, []);
@@ -29,26 +28,31 @@ const Products = () => {
   return (
     <Layout title="Dashboard - Products">
       <div className="container p-4">
-        <div className="flex gap-4">
-          <div className="w-1/4">
+        <div className="flex flex-col md:flex-row gap-4">
+          {/* Sidebar */}
+          <div className="w-full md:w-1/4">
             <AdminMenu />
           </div>
-          <div className="w-3/4">
-            <div className="mt-2 p-6 bg-white border border-gray-200 rounded-lg shadow-lg ">
-              <h3 className="text-3xl font-semibold text-gray-800">
+
+          {/* Main Content */}
+          <div className="w-full md:w-3/4">
+            <div className="mt-2 p-6 bg-white border border-gray-200 rounded-lg shadow-lg">
+              <h3 className="text-2xl font-semibold text-gray-800">
                 All Product List
               </h3>
-              <div className="flex justify-baseline gap-10 flex-wrap mt-10">
+
+              {/* Product Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
                 {products.length > 0 ? (
-                  products?.map((p) => (
+                  products.map((p) => (
                     <Link
                       to={`/dashboard/admin/product/${p.slug}`}
                       key={p._id}
-                      className="w-65 h-78 rounded-lg bg-gray-100 border border-gray-200 hover:shadow-lg"
+                      className="rounded-lg bg-gray-100 border border-gray-200 hover:shadow-lg transition-transform duration-300 hover:scale-[1.02]"
                     >
-                      <div className="relative h-3/5 bg-white rounded-t-lg flex justify-around p-1">
+                      <div className="relative h-40 bg-white rounded-t-lg flex justify-center items-center p-2">
                         <img
-                          className="rounded-t-lg h-full p-2"
+                          className="rounded-t-lg h-full w-auto object-contain"
                           src={`${
                             import.meta.env.VITE_API_URL
                           }/api/v1/product/product-photo/${
@@ -59,20 +63,17 @@ const Products = () => {
                       </div>
 
                       <div className="p-4">
-                        <div className="relative w-full overflow-hidden">
-                          <h5 className="animate-marquee mb-2 text-md font-bold tracking-tight text-gray-600  whitespace-nowrap transition-transform duration-500 ease-in-out group-hover:-translate-x-1/2">
-                            {p.name}
-                          </h5>
-                        </div>
-
-                        <p className="mb-4 h-14 font-normal text-sm text-gray-500 ">
+                        <h5 className="mb-2 text-md font-bold text-gray-600 truncate">
+                          {p.name}
+                        </h5>
+                        <p className="text-sm text-gray-500 h-14 overflow-hidden">
                           {p.description.substring(0, 60)}...
                         </p>
                       </div>
                     </Link>
                   ))
                 ) : (
-                  <p>No Products</p>
+                  <p className="text-center text-gray-500">No Products</p>
                 )}
               </div>
             </div>

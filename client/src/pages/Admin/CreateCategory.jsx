@@ -151,24 +151,24 @@ const CreateCategory = () => {
   return (
     <Layout title="Dashboard - Manage Category">
       <div className="container p-4">
-        <div className="flex gap-4">
+        <div className="flex flex-col md:flex-row gap-4">
           {/* Sidebar */}
-          <div className="w-1/4">
+          <div className="w-full md:w-1/4">
             <AdminMenu />
           </div>
 
           {/* Main Content */}
-          <div className="w-3/4">
+          <div className="w-full md:w-3/4">
             <div className="bg-white p-6 mt-2 rounded-lg shadow-lg">
               {/* Header with Search Box */}
-              <div className="flex justify-between items-center pb-4 mb-4">
-                <h3 className="text-3xl font-semibold text-gray-800">
+              <div className="flex flex-col md:flex-row justify-between items-center pb-4 mb-4 gap-2">
+                <h3 className="text-2xl md:text-3xl font-semibold text-gray-800">
                   Manage Categories
                 </h3>
                 <input
                   type="text"
                   placeholder="Search categories..."
-                  className="p-2 rounded-lg w-64 border border-gray-200 outline-none"
+                  className="p-2 rounded-lg w-full md:w-64 border border-gray-200 outline-none"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                 />
@@ -204,7 +204,7 @@ const CreateCategory = () => {
                             className="hover:bg-gray-100 transition duration-200"
                           >
                             {/* Image Column */}
-                            <td className="py-4 text-gray-800 font-medium w-1/4 flex items-center">
+                            <td className="text-gray-800 font-medium w-3/4 md:w-1/4">
                               {editingId === category._id ? (
                                 <>
                                   {/* File Upload Button */}
@@ -214,7 +214,7 @@ const CreateCategory = () => {
                                       <img
                                         src={URL.createObjectURL(editedPhoto)}
                                         alt="category_image"
-                                        className="absolute w-full h-full object-cover"
+                                        className="absolute w-full h-full object-contain"
                                       />
                                     ) : category.photo ? (
                                       // Show existing category image if no new image selected
@@ -225,7 +225,7 @@ const CreateCategory = () => {
                                           category._id
                                         }?t=${Date.now()}`}
                                         alt="category_image"
-                                        className="object-contain rounded-sm"
+                                        className="object-contain rounded-sm w-12 h-12 md:w-16 md:h-16"
                                       />
                                     ) : (
                                       <span className="text-xs text-gray-500">
@@ -250,7 +250,7 @@ const CreateCategory = () => {
                                     category._id
                                   }?t=${Date.now()}`}
                                   alt="category_image"
-                                  className="object-contain rounded-sm"
+                                  className="object-contain w-12 md:w-16 rounded-sm"
                                 />
                               )}
                             </td>
@@ -271,7 +271,7 @@ const CreateCategory = () => {
                             </td>
 
                             {/* Action Buttons */}
-                            <td className="p-3 w-1/4 flex gap-3">
+                            <td className="p-3 w-full md:w-1/4 flex gap-3">
                               {editingId === category._id ? (
                                 <>
                                   {/* Save Button */}

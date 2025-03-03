@@ -3,10 +3,11 @@ import Layout from "../components/Layout/Layout";
 import axios from "axios";
 import { Checkbox, InputNumber, Button, Radio } from "antd";
 import { Price } from "../components/Price";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaAnglesDown } from "react-icons/fa6";
 
 const HomePage = () => {
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [checked, setChecked] = useState([]);
@@ -230,10 +231,10 @@ const HomePage = () => {
           <div className="w-4/5 flex flex-col py-4 pr-2 ">
             <div className="flex flex-col pb-4 gap-6">
               <h3 className="text-2xl font-semibold text-gray-800">Products</h3>
-              <div className="flex flex-wrap gap-4 justify-stretch">
+              <div className="flex flex-wrap gap-4 justify-stretch ">
                 {products?.map((p) => (
                   <div
-                    className="w-[23%] h-fit flex flex-col relative overflow-hidden rounded-lg hover:shadow-lg bg-white p-2 border border-gray-200"
+                    className="w-[23%] h-fit flex flex-col relative overflow-hidden rounded-lg hover:shadow-lg bg-white p-2 border border-gray-200 transition-transform duration-300 hover:scale-[1.02]"
                     key={p._id}
                   >
                     <div className="w-full h-[200px]">
@@ -268,12 +269,12 @@ const HomePage = () => {
                         </h3>
                       </div>
                       <div className="flex flex-col gap-2 px-1">
-                        <Link
-                          className="py-1 text-[12px] text-blue-700 font-medium h-8"
+                        <Button
+                          className="py-1 mt-2 text-[12px] text-blue-700 font-medium h-8"
                           onClick={() => navigate(`/product/${p.slug}`)}
                         >
                           More Details
-                        </Link>
+                        </Button>
                         <Button type="primary" onClick={() => addToCart(p)}>
                           Add to Cart
                         </Button>
@@ -295,7 +296,7 @@ const HomePage = () => {
                   {loading ? (
                     <svg
                       aria-hidden="true"
-                      class="w-6 h-6 text-white animate-spin fill-blue-600"
+                      className="w-6 h-6 text-white animate-spin fill-blue-600"
                       viewBox="0 0 100 101"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"

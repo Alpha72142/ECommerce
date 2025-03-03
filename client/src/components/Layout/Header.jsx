@@ -4,6 +4,7 @@ import logo from "../../assets/shopping_ogo.jpg";
 import { useAuth } from "../../context/auth";
 import { toast } from "react-hot-toast";
 import { FiLogOut } from "react-icons/fi";
+import SearchInput from "../Form/SearchInput";
 
 const Header = () => {
   const { auth, setAuth } = useAuth();
@@ -31,13 +32,14 @@ const Header = () => {
     <nav className="w-full px-4 py-1 bg-[#f8f9fb] shadow-md lg:px-8 lg:py-1 navbar-header">
       <div className="container flex items-center justify-between mx-auto text-slate-800">
         <Link to="/" className="flex items-center">
-          <img src={logo} className="w-18 lg:w-20" alt="Logo" />
+          <img src={logo} className="w-18" alt="Logo" />
           <div className="text-lg ml-2 font-header">TRENDIFY</div>
         </Link>
 
         {/* Desktop Navigation */}
         <div className="hidden lg:flex lg:items-center">
-          <ul className="flex gap-6">
+          <ul className="flex items-center gap-6">
+            <SearchInput/>
             {[
               { path: "/", label: "Home" },
               { path: "/category", label: "Category" },
