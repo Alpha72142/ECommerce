@@ -9,40 +9,37 @@ import { useAuth } from "../../context/auth";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [auth, setAuth] = useAuth(); // ✅ Fixed destructuring (array)
 
-  const { auth, setAuth } = useAuth();
   const location = useLocation();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle registration logic here
-    console.log({ email, password });
 
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/v1/auth/login`,
         { email, password }
       );
-      if (res && res.data.success) {
-        toast.success(res.data && res.data.message);
-        setAuth({ ...auth, user: res.data.user, token: res.data.token });
-        localStorage.setItem("auth", JSON.stringify(res.data)); // Save to local storage
+      if (res?.data?.success) {
+        toast.success(res.data.message);
+        setAuth([res.data.user, res.data.token]); // ✅ Fixed state update
+        localStorage.setItem("auth", JSON.stringify(res.data));
         navigate(location.state || "/");
       } else {
         toast.error(res.data.message);
       }
     } catch (error) {
-      console.log(error);
-      toast.error("Something went wrong");
+      console.error(error);
+      toast.error("Something went wrong. Please try again.");
     }
   };
 
   return (
-    <Layout title="Login - Ecommerce app">
+    <Layout title="Login - Ecommerce App">
       <div className="flex justify-center items-center min-h-screen bg-gray-100 px-4">
         <div className="relative flex flex-col md:flex-row bg-white shadow-lg rounded-2xl max-w-2xl w-full">
           {/* Left Side (Form Section) */}
@@ -100,7 +97,10 @@ const Login = () => {
                   <input type="checkbox" className="mr-2" />
                   <span className="text-gray-600">Remember Me</span>
                 </label>
-                <NavLink to='/forgot_password' className="text-blue-600 hover:underline">
+                <NavLink
+                  to="/forgot_password"
+                  className="text-blue-600 hover:underline"
+                >
                   Forgot Password?
                 </NavLink>
               </div>

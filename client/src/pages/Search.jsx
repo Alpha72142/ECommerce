@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import Layout from "../components/Layout/Layout";
 import { useSearch } from "../context/search";
+import { IoArrowBackSharp } from "react-icons/io5";
 import { Button } from "antd";
 
 const Search = () => {
@@ -10,13 +11,24 @@ const Search = () => {
     <Layout title="Search Results">
       <div className="container mx-auto px-4 py-8">
         {/* Header Section */}
-        <div className="text-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-800">Search Results</h1>
-          <h6 className="text-gray-600 text-lg">
-            {values?.results.length < 1
-              ? "No products found"
-              : `Found ${values?.results.length} products`}
-          </h6>
+        <div className="div flex justify-center">
+          <div className="">
+            <Link
+              to="/"
+              className="flex items-center gap-2 text-gray-600 hover:text-gray-900 px-4 py-2 transition"
+            >
+              <IoArrowBackSharp className="text-lg" />
+
+            </Link>
+          </div>
+          <div className="text-center mb-6 mx-auto">
+            <h1 className="text-2xl font-bold text-gray-800">Search Results</h1>
+            <h6 className="text-gray-600 text-lg">
+              {values?.results.length < 1
+                ? "No products found"
+                : `Found ${values?.results.length} products`}
+            </h6>
+          </div>
         </div>
 
         {/* Product Grid */}

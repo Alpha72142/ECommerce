@@ -7,10 +7,25 @@ const ProductDetails = () => {
   const { slug } = useParams();
   const [product, setProduct] = useState(null);
   const [showMore, setShowMore] = useState(false);
+  const [relatedProduct, setRelatedProduct] = useState([]);
 
   useEffect(() => {
     if (slug) getProduct();
   }, [slug]);
+
+  // Get similar products
+  const getSimilarProduct = async (pid, cid) => {
+    try {
+      const { data } = await axios.get(
+        `${
+          import.meta.env.VITE_API_URL
+        }/api/v1/product/related-product/${pid}/${cid}`
+      );
+      setRelatedProduct(data?.products || []);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const getProduct = async () => {
     try {
@@ -20,9 +35,15 @@ const ProductDetails = () => {
         }/api/v1/product/get-single-product/${slug}`
       );
       setProduct(data?.product);
+      getSimilarProduct(data?.product._id, data?.product.category._id);
     } catch (error) {
       console.error(error);
     }
+  };
+
+  const addToCart = (product) => {
+    console.log("Added to cart:", product);
+    // Implement cart functionality here
   };
 
   if (!product) {
@@ -34,6 +55,7 @@ const ProductDetails = () => {
   return (
     <Layout>
       <div className="max-w-6xl mx-auto p-4 md:p-8">
+        {/* Product Details Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-white shadow-lg rounded-2xl p-6">
           <div className="flex justify-center">
             <img
@@ -59,8 +81,6 @@ const ProductDetails = () => {
                 ₹{product.price}
               </span>
             </p>
-
-            {/* Description with "More" / "Less" Toggle */}
             <p className="text-gray-700">
               {showMore
                 ? product.description
@@ -72,24 +92,51 @@ const ProductDetails = () => {
                 {showMore ? " Less" : " ...More"}
               </span>
             </p>
-
-            {/* More Details Section (Only if expanded) */}
-            {showMore && product.brand && (
-              <div className="transition-all duration-500 ease-in-out mt-4 p-4 bg-gray-100 border border-gray-300 rounded-lg">
-                <p className="text-gray-600">Brand: {product.brand}</p>
-                <p className="text-gray-600">Stock: {product.stock}</p>
-                <p className="text-gray-600">
-                  Manufacturer: {product.manufacturer}
-                </p>
-                <p className="text-gray-600">Warranty: {product.warranty}</p>
-              </div>
-            )}
-
-            {/* Add to Cart Button */}
-            <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition duration-300">
+            <button
+              onClick={() => addToCart(product)}
+              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition duration-300"
+            >
               ADD TO CART
             </button>
           </div>
+        </div>
+
+        {/* Related Products Section */}
+        <div className="mt-12">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-6">
+            Related Products
+          </h2>
+          {relatedProduct.length === 0 ? (
+            <p className="text-gray-600">No related products found.</p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {relatedProduct.map((p) => (
+                <div
+                  key={p._id}
+                  className="bg-white shadow-lg rounded-lg overflow-hidden transition-transform duration-300 hover:scale-105 flex flex-col"
+                >
+                  <img
+                    src={`${
+                      import.meta.env.VITE_API_URL
+                    }/api/v1/product/product-photo/${p._id}`}
+                    alt={p.name}
+                    className="w-full h-48 object-contain p-2"
+                  />
+                  <div className="p-4 flex flex-col flex-grow">
+                    <h3 className="text-lg font-semibold text-gray-800">
+                      {p.name}
+                    </h3>
+                    <p className="text-gray-600">₹{p.discountPrice}</p>
+                    <div className="mt-auto">
+                      <button className="bg-blue-600 mt-2 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition duration-300 w-full">
+                        ADD TO CART
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </Layout>

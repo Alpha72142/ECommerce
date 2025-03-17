@@ -50,3 +50,4 @@ coverage/
 
 # TypeScript
 *.tsbuildinfo
+.qodo

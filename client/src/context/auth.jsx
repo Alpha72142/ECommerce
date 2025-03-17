@@ -22,7 +22,7 @@ const AuthProvider = ({ children }) => {
     // eslint-disable-next-line
   }, []);
   return (
-    <AuthContext.Provider value={{ auth, setAuth }}>
+    <AuthContext.Provider value={[auth, setAuth]}>
       {children}
     </AuthContext.Provider>
   );

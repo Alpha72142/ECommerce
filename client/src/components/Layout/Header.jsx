@@ -1,25 +1,53 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import logo from "../../assets/shopping_ogo.jpg";
 import { useAuth } from "../../context/auth";
 import { toast } from "react-hot-toast";
 import { FiLogOut } from "react-icons/fi";
 import SearchInput from "../Form/SearchInput";
-
+import useCategory from "../hooks/useCategory";
+import Badge from "@mui/material/Badge";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import LoginIcon from "@mui/icons-material/Login";
+import HowToRegIcon from "@mui/icons-material/HowToReg";
+import { useCart } from "../../context/cart";
 const Header = () => {
-  const { auth, setAuth } = useAuth();
+  const [auth, setAuth] = useAuth();
+  const [cart] = useCart();
+  const categories = useCategory();
   const [isOpen, setIsOpen] = useState(false);
   const [isDropOpen, setIsDropOpen] = useState(false);
   const [isUserOpen, setIsUserOpen] = useState(false);
+  const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const navigate = useNavigate();
+
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        closeMenu();
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    const storedAuth = localStorage.getItem("auth");
+    if (storedAuth) {
+      setAuth(JSON.parse(storedAuth));
+    }
+  }, []);
+
 
   const closeMenu = () => {
     setIsOpen(false);
     setIsDropOpen(false);
     setIsUserOpen(false);
+    setIsCategoryOpen(false);
   };
-
-  // Function to close dropdown when an option is clicked
 
   const handleLogout = () => {
     setAuth({ ...auth, user: null, token: "" });
@@ -29,7 +57,10 @@ const Header = () => {
   };
 
   return (
-    <nav className="w-full px-4 py-1 bg-[#f8f9fb] shadow-md lg:px-8 lg:py-1 navbar-header">
+    <nav
+      className="w-full px-4 py-1 bg-[#f8f9fb] shadow-md lg:px-8 lg:py-1 navbar-header"
+      ref={menuRef}
+    >
       <div className="container flex items-center justify-between mx-auto text-slate-800">
         <Link to="/" className="flex items-center">
           <img src={logo} className="w-18" alt="Logo" />
@@ -39,136 +70,90 @@ const Header = () => {
         {/* Desktop Navigation */}
         <div className="hidden lg:flex lg:items-center">
           <ul className="flex items-center gap-6">
-            <SearchInput/>
-            {[
-              { path: "/", label: "Home" },
-              { path: "/category", label: "Category" },
-              { path: "/cart", label: "cart (0)" },
-            ].map((item) => (
-              <li key={item.path} className="p-1 text-sm text-slate-600 flex items-center">
-                <NavLink
-                  to={item.path}
-                  className={
-                    ({ isActive }) =>
-                      `relative px-1 py-2 transition-all duration-300 before:absolute before:left-0 before:bottom-0 
-                    before:h-[2px] before:w-full before:bg-black 
-                    ${isActive ? "before:scale-x-100" : "before:scale-x-0"}` // Apply border only for active
-                  }
+            <SearchInput />
+            <li className="p-1 text-sm text-slate-600">
+              <NavLink to="/">Home</NavLink>
+            </li>
+            <li className="relative p-1 text-sm text-slate-600 group">
+              <span
+                className="cursor-pointer"
+                onClick={() => setIsCategoryOpen(!isCategoryOpen)}
+              >
+                Category
+              </span>
+              {/* Dropdown for Category (Desktop) */}
+              {isCategoryOpen && (
+                <div className="absolute z-10 left-0 mt-2 w-48 bg-white shadow-lg rounded-md p-2 ">
+                  <Link
+                    to={`/categories`}
+                    className="block text-[14px] font-medium px-4 py-2 text-gray-900  hover:bg-gray-100"
+                  >
+                    All CATEGORY
+                  </Link>
+                  {categories.map((category) => (
+                    <Link
+                      key={category.id}
+                      to={`/category/${category.slug}`}
+                      className="block text-[12px] px-4 py-2 text-gray-700  hover:bg-gray-100"
+                    >
+                      {category.name}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </li>
+            <li className="p-1 text-sm text-slate-600">
+              <NavLink to="/cart">
+                <Badge
+                  badgeContent={cart.length}
+                  color="primary"
+                  id="basic-button"
+                  aria-controls={open ? "basic-menu" : undefined}
+                  aria-haspopup="true"
+                  aria-hidden={open ? "false" : "true"}
+                  aria-expanded={open ? "true" : undefined}
+                  // onClick={handleClick}
                 >
-                  {item.label}
-                </NavLink>
-              </li>
-            ))}
-
-            {!auth.user ? (
+                  Cart
+                </Badge>
+              </NavLink>
+            </li>
+            {!auth?.user ? (
               <>
                 <li className="p-1 text-sm text-slate-600">
-                  <NavLink
-                    to="/register"
-                    className={
-                      ({ isActive }) =>
-                        `relative px-1 py-2 transition-all duration-300 before:absolute before:left-0 before:bottom-0 
-                      before:h-[2px] before:w-full before:bg-black 
-                      ${isActive ? "before:scale-x-100" : "before:scale-x-0"}` // Apply border only for active
-                    }
-                  >
-                    Register
-                  </NavLink>
+                  <NavLink to="/register">Register</NavLink>
                 </li>
                 <li className="p-1 text-sm text-slate-600">
-                  <div className="relative inline-block text-left">
-                    <span
-                      className="relative inline-flex w-full gap-x-1.5 cursor-pointer"
-                      id="menu-button"
-                      aria-haspopup="true"
-                      onClick={() => setIsDropOpen(!isDropOpen)}
-                    >
-                      Login
-                      <svg
-                        className={`-mr-1 size-5 text-gray-400 ${
-                          isDropOpen ? "transform scale-y-[-1]" : ""
-                        }`}
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                        aria-hidden="true"
-                        data-slot="icon"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </span>
-
-                    {/* Dropdown menu */}
-                    {isDropOpen && (
-                      <div
-                        className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white ring-1 shadow-lg ring-black/5 focus:outline-hidden"
-                        role="menu"
-                        aria-orientation="vertical"
-                        aria-labelledby="menu-button"
-                        tabIndex={-1}
-                      >
-                        <div className="py-1" role="none">
-                          <NavLink
-                            to="/login"
-                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                            onClick={closeMenu}
-                          >
-                            User
-                          </NavLink>
-                          <NavLink
-                            to="/login"
-                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                            onClick={closeMenu}
-                          >
-                            Admin
-                          </NavLink>
-                        </div>
-                      </div>
-                    )}
-                  </div>
+                  <NavLink to="/login">Login</NavLink>
                 </li>
               </>
             ) : (
               <li className="p-1 text-sm text-slate-600">
                 <div
                   onClick={() => setIsUserOpen(!isUserOpen)}
-                  className="relative inline-flex items-center justify-center w-10 h-10 overflow-hidden rounded-full bg-gray-600"
+                  className="relative inline-flex items-center justify-center w-10 h-10 overflow-hidden rounded-full bg-gray-600 cursor-pointer"
                 >
                   <span className="font-medium text-gray-300">
-                    {auth.user.name[0]} 
+                    {auth?.user.name[0]}
                   </span>
                 </div>
                 {isUserOpen && (
-                  <div
-                    className="absolute right-2 z-10 mt-2 w-56 origin-top-right rounded-md bg-white ring-1 shadow-lg ring-black/5 focus:outline-hidden"
-                    role="menu"
-                    aria-orientation="vertical"
-                    aria-labelledby="menu-button"
-                    tabIndex={-1}
-                  >
-                    <div className="py-1" role="none">
-                      <NavLink
-                        to={`/dashboard/${auth?.user?.role === 1 ? "admin" : "user"}`}
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                        onClick={closeMenu}
-                      >
-                        Dashboard
-                      </NavLink>
-
-                      <NavLink
-                        onClick={(e) => {
-                          e.preventDefault(); // Prevent NavLink's default behavior
-                          handleLogout(); // Call logout function
-                        }}
-                        className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center justify-between"
-                      >
-                        Logout
-                        <FiLogOut/>
-                      </NavLink>
-                    </div>
+                  <div className="absolute right-2 z-10 mt-2 w-56 origin-top-right rounded-md bg-white ring-1 shadow-lg ring-black/5">
+                    <NavLink
+                      to={`/dashboard/${
+                        auth?.user?.role === 1 ? "admin" : "user"
+                      }`}
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      onClick={closeMenu}
+                    >
+                      Dashboard
+                    </NavLink>
+                    <button
+                      onClick={handleLogout}
+                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center justify-between"
+                    >
+                      Logout <FiLogOut />
+                    </button>
                   </div>
                 )}
               </li>
@@ -176,141 +161,103 @@ const Header = () => {
           </ul>
         </div>
 
-        {/* Mobile Toggle Button */}
+        {/* Mobile Menu Button */}
         <button
           className="lg:hidden p-2 text-black"
           onClick={() => setIsOpen(!isOpen)}
         >
           ☰
         </button>
+      </div>
 
-        {/* Sidebar Menu */}
-        <div
-          className={`fixed top-0 left-0 h-full w-64 bg-white shadow-lg transform ${
-            isOpen ? "translate-x-0" : "-translate-x-full"
-          } transition-transform lg:hidden z-50`}
-        >
-          <button
-            className="absolute top-4 right-4 text-2xl"
-            onClick={closeMenu}
-          >
-            ✖
-          </button>
-          <ul className="flex flex-col p-6 gap-4">
-            <div className="relative inline-flex items-center justify-center w-18 h-18 mx-auto overflow-hidden rounded-full bg-gray-600">
-              <span className="font-medium text-gray-300">
-                JL
-              </span>
-            </div>
-            {[
-              { path: "/", label: "Home" },
-              {path: `/dashboard/${auth?.user?.role === 1 ? "admin" : "user"}`, label: "Dashboard"},
-              { path: "/category", label: "Category" },
-              { path: "/cart", label: "cart (0)" },
-            ].map((item) => (
-              <li key={item.path} className="p-1 text-sm text-slate-600">
-                <NavLink
-                  to={item.path}
-                  className={
-                    ({ isActive }) =>
-                      `relative px-4 py-2 transition-all duration-300 before:absolute before:left-0 before:bottom-0 
-                    before:h-[2px] before:w-full before:bg-black 
-                    ${isActive ? "before:scale-x-100" : "before:scale-x-0"}` // Conditional border
-                  }
+      {/* Mobile Sidebar Menu */}
+      <div
+        className={`fixed overflow-y-scroll top-0 left-0 h-full w-64 bg-white shadow-lg transform ${
+          isOpen ? "translate-x-0" : "-translate-x-full"
+        } transition-transform lg:hidden z-50`}
+      >
+        <button className="absolute top-4 right-4 text-2xl" onClick={closeMenu}>
+          ✖
+        </button>
+        <ul className="flex flex-col p-6 gap-4">
+          <li className="p-1 text-sm text-slate-600">
+            <NavLink to="/" onClick={closeMenu}>
+              Home
+            </NavLink>
+          </li>
+          <li className="relative p-1 text-sm text-slate-600">
+            <span
+              className="cursor-pointer flex justify-between items-center"
+              onClick={() => setIsCategoryOpen(!isCategoryOpen)}
+            >
+              Category
+              <svg
+                className={`w-5 h-5 transition-transform ${
+                  isCategoryOpen ? "rotate-180" : "rotate-0"
+                }`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </span>
+            {/* Category Dropdown (Mobile) */}
+            <div
+              className={`overflow-hidden transition-all duration-300 ${
+                isCategoryOpen ? "max-h-100" : "max-h-0"
+              }`}
+            >
+              {categories.map((category) => (
+                <Link
+                  key={category.id}
+                  to={`/category/${category.slug}`}
+                  className="block text-[13px] px-4 py-2 text-gray-700 hover:bg-gray-100"
                   onClick={closeMenu}
                 >
-                  {item.label}
-                </NavLink>
-              </li>
-            ))}
-            {!auth.user ? (
-              <>
-                <li className="p-1 text-sm text-slate-600">
-                  <NavLink
-                    to="/register"
-                    className={
-                      ({ isActive }) =>
-                        `relative px-4 py-2 transition-all duration-300 before:absolute before:left-0 before:bottom-0 
-                      before:h-[2px] before:w-full before:bg-black 
-                      ${isActive ? "before:scale-x-100" : "before:scale-x-0"}` // Conditional border
-                    }
-                    onClick={closeMenu}
-                  >
-                    Register
-                  </NavLink>
-                </li>
-                <li className="p-1 text-sm text-slate-600">
-                  <div className="relative inline-block px-4">
-                    <span
-                      className="relative inline-flex w-full gap-x-1.5 cursor-pointer"
-                      id="menu-button"
-                      aria-haspopup="true"
-                      onClick={() => setIsDropOpen(!isDropOpen)}
-                    >
-                      Login
-                      <svg
-                        className={`-mr-1 size-5 text-gray-400 ${
-                          isDropOpen ? "transform scale-y-[-1]" : ""
-                        }`}
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                        aria-hidden="true"
-                        data-slot="icon"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </span>
-
-                    {/* Dropdown menu */}
-                    {isDropOpen && (
-                      <div
-                        className="absolute z-10 mt-2 w-40 origin-top-right rounded-md bg-white ring-1 shadow-lg ring-black/5 focus:outline-hidden"
-                        role="menu"
-                        aria-orientation="vertical"
-                        aria-labelledby="menu-button"
-                        tabIndex={-1}
-                      >
-                        <div className="py-1" role="none">
-                          <NavLink
-                            to="/login"
-                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                            onClick={closeMenu}
-                          >
-                            User
-                          </NavLink>
-                          <NavLink
-                            to="/login"
-                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                            onClick={closeMenu}
-                          >
-                            Admin
-                          </NavLink>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </li>
-              </>
-            ) : (
+                  {category.name}
+                </Link>
+              ))}
+            </div>
+          </li>
+          <li className="p-1 text-sm text-slate-600">
+            <NavLink to="/cart" onClick={closeMenu}>
+              Cart (0)
+            </NavLink>
+          </li>
+          {!auth?.user ? (
+            <>
               <li className="p-1 text-sm text-slate-600">
-                <NavLink
-                  onClick={(e) => {
-                    e.preventDefault(); // Prevent NavLink's default behavior
-                    handleLogout(); // Call logout function
-                  }}
-                  className="relative px-4 py-2 flex items-center justify-between"
-                >
-                  Logout
-                  <FiLogOut/>
+                <NavLink to="/register" onClick={closeMenu}>
+                  Register
                 </NavLink>
               </li>
-            )}
-          </ul>
-        </div>
+              <li className="p-1 text-sm text-slate-600">
+                <NavLink to="/login" onClick={closeMenu}>
+                  Login
+                </NavLink>
+              </li>
+            </>
+          ) : (
+            <li className="p-1 text-sm text-slate-600">
+              <button
+                onClick={() => {
+                  handleLogout();
+                  closeMenu();
+                }}
+                className="w-full text-left"
+              >
+                Logout <FiLogOut />
+              </button>
+            </li>
+          )}
+        </ul>
       </div>
     </nav>
   );
