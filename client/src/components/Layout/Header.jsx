@@ -92,7 +92,7 @@ const Header = () => {
                   </Link>
                   {categories.map((category) => (
                     <Link
-                      key={category.id}
+                      key={category._id}
                       to={`/category/${category.slug}`}
                       className="block text-[12px] px-4 py-2 text-gray-700  hover:bg-gray-100"
                     >
@@ -216,7 +216,7 @@ const Header = () => {
             >
               {categories.map((category) => (
                 <Link
-                  key={category.id}
+                  key={category._id}
                   to={`/category/${category.slug}`}
                   className="block text-[13px] px-4 py-2 text-gray-700 hover:bg-gray-100"
                   onClick={closeMenu}

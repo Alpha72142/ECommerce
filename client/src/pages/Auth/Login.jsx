@@ -9,7 +9,7 @@ import { useAuth } from "../../context/auth";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [auth, setAuth] = useAuth(); // ✅ Fixed destructuring (array)
+  const [auth, setAuth] = useAuth();
 
   const location = useLocation();
   const [email, setEmail] = useState("");
@@ -24,9 +24,9 @@ const Login = () => {
         `${import.meta.env.VITE_API_URL}/api/v1/auth/login`,
         { email, password }
       );
-      if (res?.data?.success) {
+      if (res && res?.data?.success) {
         toast.success(res.data.message);
-        setAuth([res.data.user, res.data.token]); // ✅ Fixed state update
+        setAuth({ ...auth, user: res.data.user, token: res.data.token });
         localStorage.setItem("auth", JSON.stringify(res.data));
         navigate(location.state || "/");
       } else {

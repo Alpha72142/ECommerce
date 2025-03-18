@@ -22,7 +22,7 @@ const UserMenu = () => {
       <NavLink
         to="/dashboard/user/orders"
         className={({ isActive }) =>
-          `block w-full px-4 py-2 border-b cursor-pointer 
+          `block w-full px-4 py-2 rounded-b-lg cursor-pointer 
              border-gray-600 
            hover:bg-cyan-900 hover:text-white 
            ${isActive ? "bg-cyan-900 text-white" : ""}`

@@ -2,7 +2,8 @@ import AdminMenu from "../../components/Layout/AdminMenu";
 import Layout from "./../../components/Layout/Layout";
 import { useAuth } from "../../context/auth";
 const AdminDashboard = () => {
-  const { auth } = useAuth();
+  const [ auth ] = useAuth();
+  console.log("AdminDashboard", auth);
   return (
     <Layout title="Admin Dashboard - Ecommerce app">
       <div className="container p-4">

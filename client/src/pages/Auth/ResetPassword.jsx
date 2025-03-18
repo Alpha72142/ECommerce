@@ -67,6 +67,7 @@ const ResetPassword = () => {
         {
           email,
           newPassword,
+          resetToken,
         }
       );
 

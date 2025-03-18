@@ -38,7 +38,6 @@ const Register = () => {
     }
   };
 
-  console.log(import.meta.env.VITE_API_URL);
 
   return (
     <Layout title="Register - Ecommerce App">

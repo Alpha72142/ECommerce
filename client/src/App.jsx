@@ -35,11 +35,6 @@ function App() {
         <Route path="/category/:slug" element={<CategoryProduct />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/search" element={<Search />} />
-        <Route path="/dashboard" element={<PrivateRoute />}>
-          <Route path="user" element={<Dashboard />} />
-          <Route path="user/profile" element={<Profile />} />
-          <Route path="user/orders" element={<Orders />} />
-        </Route>
         <Route path="/dashboard" element={<AdminRoute />}>
           <Route path="admin" element={<AdminDashboard />} />
           <Route path="admin/create_category" element={<CreateCategory />} />
@@ -47,6 +42,11 @@ function App() {
           <Route path="admin/product/:slug" element={<UpdateProducts />} />
           <Route path="admin/products" element={<Products />} />
           <Route path="admin/users" element={<Users />} />
+        </Route>
+        <Route path="/dashboard" element={<PrivateRoute />}>
+          <Route path="user" element={<Dashboard />} />
+          <Route path="user/profile" element={<Profile />} />
+          <Route path="user/orders" element={<Orders />} />
         </Route>
         <Route path="/forgot_password" element={<ForgotPassword />} />
         <Route path="/reset_password" element={<ResetPassword />} />
