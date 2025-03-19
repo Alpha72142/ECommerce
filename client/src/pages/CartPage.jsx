@@ -123,8 +123,10 @@ const CartPage = () => {
               Checkout
             </h2>
             <p className="text-lg font-semibold">
-              Total: $
-              {cart.reduce((total, item) => total + item.price, 0).toFixed(2)}
+              Total: ₹
+              <span className="text-amber-700 ml-2">
+                {cart.reduce((total, item) => total + item.price, 0).toFixed(2)}
+              </span>
             </p>
             {auth?.user?.address && (
               <div className="mt-4">
@@ -141,7 +143,7 @@ const CartPage = () => {
             <button
               className="w-full mt-4 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-200"
               onClick={() => {
-                setShowPayment(true)
+                setShowPayment(true);
                 if (!auth?.token) {
                   navigate("/login");
                 }
@@ -157,7 +159,6 @@ const CartPage = () => {
                   options={{
                     authorization: clientToken,
                     googlePay: { flow: "vault" },
-                    
                   }}
                   onInstance={(instance) => setInstance(instance)}
                 />

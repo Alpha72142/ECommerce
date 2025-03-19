@@ -75,10 +75,10 @@ const ProductDetails = () => {
             <p className="flex items-center gap-2 text-lg text-gray-600">
               Price:
               <span className="text-green-600 font-semibold">
-                ₹{product.discountPrice}
+                ₹ {Math.round(product.discountPrice)}
               </span>
               <span className="text-gray-400 font-semibold text-sm line-through">
-                ₹{product.price}
+                {product.discount ? ` ₹ ${product.price}` : ""}
               </span>
             </p>
             <p className="text-gray-700">
@@ -123,11 +123,25 @@ const ProductDetails = () => {
                     className="w-full h-48 object-contain p-2"
                   />
                   <div className="p-4 flex flex-col flex-grow">
-                    <h3 className="text-lg font-semibold text-gray-800">
-                      {p.name}
-                    </h3>
-                    <p className="text-gray-600">₹{p.discountPrice}</p>
                     <div className="mt-auto">
+                      <div className="relative w-[95%] overflow-hidden">
+                        <h5 className="animate-marquee pt-2 text-md font-bold tracking-tight text-gray-600  whitespace-nowrap transition-transform duration-500 ease-in-out group-hover:-translate-x-1/2">
+                          {p.name}
+                        </h5>
+                      </div>
+                      <div className="w-full">
+                        <p className="text-sm text-gray-600">
+                          {p.description.substring(0, 24)}...
+                        </p>
+                        <div className="flex items-center gap-4 mt-2">
+                          <h3 className="text-md font-semibold text-gray-800">
+                            ₹ {Math.round(p.discountPrice)}
+                          </h3>
+                          <h3 className="text-sm font-semibold text-gray-400 line-through">
+                            {p.discount ? ` ₹ ${p.price}` : ""}
+                          </h3>
+                        </div>
+                      </div>
                       <button className="bg-blue-600 mt-2 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition duration-300 w-full">
                         ADD TO CART
                       </button>
