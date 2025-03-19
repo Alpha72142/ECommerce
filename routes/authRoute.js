@@ -7,8 +7,14 @@ import {
   verifyOTPController,
   resetPasswordController,
   updateProfileController,
+  getOrderController,
+  getAllOrderController,
 } from "../controllers/authController.js";
-import { isAdmin, isUser, requireSignIn } from "../middlewares/authMiddleware.js";
+import {
+  isAdmin,
+  isUser,
+  requireSignIn,
+} from "../middlewares/authMiddleware.js";
 
 //router object
 const router = express.Router();
@@ -42,6 +48,13 @@ router.get("/admin-auth", requireSignIn, isAdmin, (req, res) => {
 });
 
 //update profile
-router.put('/profile', requireSignIn, updateProfileController);
+router.put("/profile", requireSignIn, updateProfileController);
+
+//orders
+
+router.get("/orders", requireSignIn, getOrderController);
+
+//all orders
+router.get("/all-orders", requireSignIn,isAdmin, getAllOrderController);
 
 export default router;

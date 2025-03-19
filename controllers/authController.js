@@ -1,5 +1,6 @@
 import { compare } from "bcrypt";
 import userModel from "../models/userModel.js";
+import orderModel from "../models/orderModel.js";
 import { comparePassword, hashPassword } from "./../helpers/authHelper.js";
 import JWT from "jsonwebtoken";
 import { sendOTPEmail } from "./../services/nodemailer.js";
@@ -151,8 +152,6 @@ export const forgotPasswordController = async (req, res) => {
   }
 };
 
-
-
 export const verifyOTPController = async (req, res) => {
   const { email, otp } = req.body;
 
@@ -199,7 +198,6 @@ export const verifyOTPController = async (req, res) => {
   }
 };
 
-
 //test controller
 export const resetPasswordController = async (req, res) => {
   const { email, newPassword, resetToken } = req.body;
@@ -238,14 +236,16 @@ export const resetPasswordController = async (req, res) => {
 };
 
 //update profile
-export const updateProfileController = async (req,res) => {
-  try{
-    const {name, email, password,address,phone} = req.body;
+export const updateProfileController = async (req, res) => {
+  try {
+    const { name, email, password, address, phone } = req.body;
     const user = await userModel.findById(req.user._id);
-    if(password && password.length < 6){
-      return res.json({error:'password is required and should be at least 6 characters'})
+    if (password && password.length < 6) {
+      return res.json({
+        error: "password is required and should be at least 6 characters",
+      });
     }
-    const hashedPassword = password ? await hashPassword(password) : undefined
+    const hashedPassword = password ? await hashPassword(password) : undefined;
     const updatedUser = await userModel.findByIdAndUpdate(
       req.user._id,
       {
@@ -260,18 +260,53 @@ export const updateProfileController = async (req,res) => {
     res.status(200).send({
       success: true,
       message: "Profile Updated Successfully",
-      updatedUser
-    })
-  }catch(error){
+      updatedUser,
+    });
+  } catch (error) {
     console.log(error);
     res.status(500).send({
       success: false,
       message: "Error while updating profile",
-      error
-    })
+      error,
+    });
   }
 };
 
+//orders
+export const getOrderController = async (req, res) => {
+  try {
+    const orders = await orderModel
+      .find({ buyer: req.user._id })
+      .populate("products.product", "name price quantity")
+      .populate("buyer", "name");
+    res.json(orders);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Error while getting orders",
+      error,
+    });
+  }
+};
+
+export const getAllOrderController = async (req, res) => {
+  try {
+    const orders = await orderModel
+      .find({})
+      .populate("products.product", "name price quantity")
+      .populate("buyer", "name")
+      .sort({ createdAt: -1 });
+    res.json(orders);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Error while getting orders",
+      error,
+    });
+  }
+};
 
 export const testController = (req, res) => {
   res.send("Protected Route");

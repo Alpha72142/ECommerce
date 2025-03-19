@@ -151,6 +151,28 @@ const HomePage = () => {
     getAllProducts(); // Fetch all products again
   };
 
+  const exitingItemInCartCheck = (p) => {
+    const existingItemIndex = cart.findIndex((item) => item._id === p._id);
+
+    if (existingItemIndex !== -1) {
+      // If item exists, increase orderQuantity
+      const updatedCart = [...cart];
+      updatedCart[existingItemIndex].orderQuantity =
+        (updatedCart[existingItemIndex].orderQuantity || 1) + 1;
+      setCart(updatedCart);
+      localStorage.setItem("cart", JSON.stringify(updatedCart));
+    } else {
+      // If item does not exist, add it with orderQuantity = 1
+      const newItem = { ...p, orderQuantity: 1 };
+      setCart([...cart, newItem]);
+      localStorage.setItem("cart", JSON.stringify([...cart, newItem]));
+      console.log("Item added to cart:", newItem);
+    }
+
+    toast.success("Item Added to cart");
+  };
+
+
   return (
     <Layout title="Home - Ecommerce App">
       <div className="container flex flex-col">
@@ -260,8 +282,8 @@ const HomePage = () => {
                       </h5>
                     </div>
                     <div className="w-full">
-                      <p className="text-sm text-gray-600">
-                        {p.description.substring(0, 24)}...
+                      <p className="text-sm text-gray-600 line-clamp-2">
+                        {p.description}
                       </p>
                       <div className="flex items-center gap-4 mt-2">
                         <h3 className="text-md font-semibold text-gray-800">
@@ -280,14 +302,7 @@ const HomePage = () => {
                         </Button>
                         <Button
                           type="primary"
-                          onClick={() => {
-                            setCart([...cart, p]);
-                            localStorage.setItem(
-                              "cart",
-                              JSON.stringify([...cart, p])
-                            );
-                            toast.success("Item Added to cart");
-                          }}
+                          onClick={() => exitingItemInCartCheck(p)}
                         >
                           Add to Cart
                         </Button>

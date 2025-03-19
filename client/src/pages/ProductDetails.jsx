@@ -8,12 +8,14 @@ const ProductDetails = () => {
   const [product, setProduct] = useState(null);
   const [showMore, setShowMore] = useState(false);
   const [relatedProduct, setRelatedProduct] = useState([]);
+  const [cart, setCart] = useState([]);
 
   useEffect(() => {
     if (slug) getProduct();
+    const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
+    setCart(storedCart);
   }, [slug]);
 
-  // Get similar products
   const getSimilarProduct = async (pid, cid) => {
     try {
       const { data } = await axios.get(
@@ -41,9 +43,42 @@ const ProductDetails = () => {
     }
   };
 
-  const addToCart = (product) => {
-    console.log("Added to cart:", product);
-    // Implement cart functionality here
+  const addToCart = (p) => {
+    const existingItemIndex = cart.findIndex((item) => item._id === p._id);
+    let updatedCart = [...cart];
+
+    if (existingItemIndex !== -1) {
+      updatedCart[existingItemIndex].orderQuantity += 1;
+    } else {
+      updatedCart.push({ ...p, orderQuantity: 1 });
+    }
+
+    setCart(updatedCart);
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
+  };
+
+  const updateQuantity = (p, type) => {
+    const existingItemIndex = cart.findIndex((item) => item._id === p._id);
+    let updatedCart = [...cart];
+
+    if (existingItemIndex !== -1) {
+      if (type === "increase") {
+        updatedCart[existingItemIndex].orderQuantity += 1;
+      } else if (type === "decrease") {
+        if (updatedCart[existingItemIndex].orderQuantity > 1) {
+          updatedCart[existingItemIndex].orderQuantity -= 1;
+        } else {
+          updatedCart.splice(existingItemIndex, 1);
+        }
+      }
+      setCart(updatedCart);
+      localStorage.setItem("cart", JSON.stringify(updatedCart));
+    }
+  };
+
+  const getQuantity = (p) => {
+    const item = cart.find((item) => item._id === p._id);
+    return item ? item.orderQuantity : 0;
   };
 
   if (!product) {
@@ -92,65 +127,34 @@ const ProductDetails = () => {
                 {showMore ? " Less" : " ...More"}
               </span>
             </p>
-            <button
-              onClick={() => addToCart(product)}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition duration-300"
-            >
-              ADD TO CART
-            </button>
-          </div>
-        </div>
 
-        {/* Related Products Section */}
-        <div className="mt-12">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-6">
-            Related Products
-          </h2>
-          {relatedProduct.length === 0 ? (
-            <p className="text-gray-600">No related products found.</p>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {relatedProduct.map((p) => (
-                <div
-                  key={p._id}
-                  className="bg-white shadow-lg rounded-lg overflow-hidden transition-transform duration-300 hover:scale-105 flex flex-col"
+            {getQuantity(product) > 0 ? (
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={() => updateQuantity(product, "decrease")}
+                  className="bg-red-500 text-white px-3 py-2 rounded-lg"
                 >
-                  <img
-                    src={`${
-                      import.meta.env.VITE_API_URL
-                    }/api/v1/product/product-photo/${p._id}`}
-                    alt={p.name}
-                    className="w-full h-48 object-contain p-2"
-                  />
-                  <div className="p-4 flex flex-col flex-grow">
-                    <div className="mt-auto">
-                      <div className="relative w-[95%] overflow-hidden">
-                        <h5 className="animate-marquee pt-2 text-md font-bold tracking-tight text-gray-600  whitespace-nowrap transition-transform duration-500 ease-in-out group-hover:-translate-x-1/2">
-                          {p.name}
-                        </h5>
-                      </div>
-                      <div className="w-full">
-                        <p className="text-sm text-gray-600">
-                          {p.description.substring(0, 24)}...
-                        </p>
-                        <div className="flex items-center gap-4 mt-2">
-                          <h3 className="text-md font-semibold text-gray-800">
-                            ₹ {Math.round(p.discountPrice)}
-                          </h3>
-                          <h3 className="text-sm font-semibold text-gray-400 line-through">
-                            {p.discount ? ` ₹ ${p.price}` : ""}
-                          </h3>
-                        </div>
-                      </div>
-                      <button className="bg-blue-600 mt-2 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition duration-300 w-full">
-                        ADD TO CART
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+                  -
+                </button>
+                <span className="text-lg font-semibold">
+                  {getQuantity(product)}
+                </span>
+                <button
+                  onClick={() => updateQuantity(product, "increase")}
+                  className="bg-green-500 text-white px-3 py-2 rounded-lg"
+                >
+                  +
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => addToCart(product)}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition duration-300"
+              >
+                ADD TO CART
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </Layout>
