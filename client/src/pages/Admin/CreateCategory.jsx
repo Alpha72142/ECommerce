@@ -6,6 +6,7 @@ import AdminMenu from "../../components/Layout/AdminMenu";
 import Layout from "../../components/Layout/Layout";
 import CategoryForm from "../../components/Form/CategoryForm";
 import { Modal } from "antd";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const CreateCategory = () => {
   const [categories, setCategories] = useState([]);
@@ -17,6 +18,7 @@ const CreateCategory = () => {
   const [editedName, setEditedName] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   // Fetch categories
   const getAllCategory = async () => {
@@ -31,6 +33,8 @@ const CreateCategory = () => {
     } catch (error) {
       console.error(error);
       toast.error("Error fetching categories");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -96,8 +100,6 @@ const CreateCategory = () => {
         setEditedPhoto(null); // Reset image state
 
         await getAllCategory(); // ✅ Re-fetch updated categories to reflect changes
-
-        console.log("Updated category:", data.category);
       } else {
         toast.error(data.message);
       }
@@ -185,146 +187,151 @@ const CreateCategory = () => {
 
               {/* Table */}
               <div className="overflow-x-auto">
-                <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
-                  <thead>
-                    <tr className="text-gray-800 border-b">
-                      <th className="p-3 text-left w-1/4">Img</th>
-                      <th className="p-3 text-left w-2/4">Name</th>
-                      <th className="p-3 text-left w-1/4">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredCategories.length > 0 ? (
-                      filteredCategories.map((category) => {
-                        console.log("Rendering category:", category); // Debugging
-
-                        return (
-                          <tr
-                            key={category._id}
-                            className="hover:bg-gray-100 transition duration-200"
-                          >
-                            {/* Image Column */}
-                            <td className="text-gray-800 font-medium w-3/4 md:w-1/4">
-                              {editingId === category._id ? (
-                                <>
-                                  {/* File Upload Button */}
-                                  <label className="w-full h-10 cursor-pointer flex items-center justify-center bg-gray-50 text-blue-500 border border-gray-300 rounded-sm overflow-hidden relative hover:bg-gray-200">
-                                    {editedPhoto ? (
-                                      // Show new image preview if uploaded
-                                      <img
-                                        src={URL.createObjectURL(editedPhoto)}
-                                        alt="category_image"
-                                        className="absolute w-full h-full object-contain"
-                                      />
-                                    ) : category.photo ? (
-                                      // Show existing category image if no new image selected
-                                      <img
-                                        src={`${
-                                          import.meta.env.VITE_API_URL
-                                        }/api/v1/category/category-photo/${
-                                          category._id
-                                        }?t=${Date.now()}`}
-                                        alt="category_image"
-                                        className="object-contain rounded-sm w-12 h-12 md:w-16 md:h-16"
-                                      />
-                                    ) : (
-                                      <span className="text-xs text-gray-500">
-                                        Upload
-                                      </span>
-                                    )}
-                                    <input
-                                      type="file"
-                                      accept="image/*"
-                                      onChange={(e) =>
-                                        setEditedPhoto(e.target.files[0])
-                                      }
-                                      hidden
-                                    />
-                                  </label>
-                                </>
-                              ) : (
-                                <img
-                                  src={`${
-                                    import.meta.env.VITE_API_URL
-                                  }/api/v1/category/category-photo/${
-                                    category._id
-                                  }?t=${Date.now()}`}
-                                  alt="category_image"
-                                  className="object-contain w-12 md:w-16 rounded-sm"
-                                />
-                              )}
-                            </td>
-                            {/* Name Column */}
-                            <td className="p-3 text-gray-800 font-medium w-2/4">
-                              {editingId === category._id ? (
-                                <input
-                                  type="text"
-                                  className="p-2 border border-gray-300 rounded w-full"
-                                  value={editedName}
-                                  onChange={(e) =>
-                                    setEditedName(e.target.value)
-                                  }
-                                />
-                              ) : (
-                                <span>{category.name}</span>
-                              )}
-                            </td>
-
-                            {/* Action Buttons */}
-                            <td className="p-3 w-full md:w-1/4 flex gap-3">
-                              {editingId === category._id ? (
-                                <>
-                                  {/* Save Button */}
-                                  <button
-                                    onClick={() => handleSave(category._id)}
-                                    className="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-green-700 transition duration-200"
-                                  >
-                                    <FaCheck />
-                                  </button>
-
-                                  {/* Cancel Button */}
-                                  <button
-                                    onClick={handleCancel}
-                                    className="bg-gray-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-gray-600 transition duration-200"
-                                  >
-                                    <FaTimes />
-                                  </button>
-                                </>
-                              ) : (
-                                <>
-                                  {/* Edit Button */}
-                                  <button
-                                    onClick={() => handleEdit(category)}
-                                    className="bg-blue-900 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700 transition duration-200"
-                                  >
-                                    <FaEdit />
-                                  </button>
-
-                                  {/* Delete Button */}
-                                  <button
-                                    onClick={() => showModel(category._id)}
-                                    className="bg-red-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-red-700 transition duration-200"
-                                  >
-                                    <FaTrash />
-                                  </button>
-                                </>
-                              )}
-                            </td>
-                          </tr>
-                        );
-                      })
-                    ) : (
-                      <tr>
-                        <td
-                          colSpan="3"
-                          className="p-3 text-center text-gray-500"
-                        >
-                          No categories found
-                        </td>
+                {loading ? (
+                  <div className="flex justify-center items-center h-40">
+                    <CircularProgress />
+                  </div>
+                ) : (
+                  <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+                    <thead>
+                      <tr className="text-gray-800 border-b">
+                        <th className="p-3 text-left w-1/4">Img</th>
+                        <th className="p-3 text-left w-2/4">Name</th>
+                        <th className="p-3 text-left w-1/4">Action</th>
                       </tr>
-                    )}
-                  </tbody>
-                </table>
+                    </thead>
+
+                    <tbody>
+                      {filteredCategories.length > 0 ? (
+                        filteredCategories.map((category) => {
+                          return (
+                            <tr
+                              key={category._id}
+                              className="hover:bg-gray-100 transition duration-200"
+                            >
+                              {/* Image Column */}
+                              <td className="text-gray-800 font-medium w-3/4 md:w-1/4">
+                                {editingId === category._id ? (
+                                  <>
+                                    {/* File Upload Button */}
+                                    <label className="w-full h-10 cursor-pointer flex items-center justify-center bg-gray-50 text-blue-500 border border-gray-300 rounded-sm overflow-hidden relative hover:bg-gray-200">
+                                      {editedPhoto ? (
+                                        // Show new image preview if uploaded
+                                        <img
+                                          src={URL.createObjectURL(editedPhoto)}
+                                          alt="category_image"
+                                          className="absolute w-full h-full object-contain"
+                                        />
+                                      ) : category.photo ? (
+                                        // Show existing category image if no new image selected
+                                        <img
+                                          src={`${
+                                            import.meta.env.VITE_API_URL
+                                          }/api/v1/category/category-photo/${
+                                            category._id
+                                          }?t=${Date.now()}`}
+                                          alt="category_image"
+                                          className="object-contain rounded-sm w-12 h-12 md:w-16 md:h-16"
+                                        />
+                                      ) : (
+                                        <span className="text-xs text-gray-500">
+                                          Upload
+                                        </span>
+                                      )}
+                                      <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={(e) =>
+                                          setEditedPhoto(e.target.files[0])
+                                        }
+                                        hidden
+                                      />
+                                    </label>
+                                  </>
+                                ) : (
+                                  <img
+                                    src={`${
+                                      import.meta.env.VITE_API_URL
+                                    }/api/v1/category/category-photo/${
+                                      category._id
+                                    }?t=${Date.now()}`}
+                                    alt="category_image"
+                                    className="object-contain w-12 md:w-16 rounded-sm"
+                                  />
+                                )}
+                              </td>
+                              {/* Name Column */}
+                              <td className="p-3 text-gray-800 font-medium w-2/4">
+                                {editingId === category._id ? (
+                                  <input
+                                    type="text"
+                                    className="p-2 border border-gray-300 rounded w-full"
+                                    value={editedName}
+                                    onChange={(e) =>
+                                      setEditedName(e.target.value)
+                                    }
+                                  />
+                                ) : (
+                                  <span>{category.name}</span>
+                                )}
+                              </td>
+
+                              {/* Action Buttons */}
+                              <td className="p-3 w-full md:w-1/4 flex gap-3">
+                                {editingId === category._id ? (
+                                  <>
+                                    {/* Save Button */}
+                                    <button
+                                      onClick={() => handleSave(category._id)}
+                                      className="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-green-700 transition duration-200"
+                                    >
+                                      <FaCheck />
+                                    </button>
+
+                                    {/* Cancel Button */}
+                                    <button
+                                      onClick={handleCancel}
+                                      className="bg-gray-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-gray-600 transition duration-200"
+                                    >
+                                      <FaTimes />
+                                    </button>
+                                  </>
+                                ) : (
+                                  <>
+                                    {/* Edit Button */}
+                                    <button
+                                      onClick={() => handleEdit(category)}
+                                      className="bg-blue-900 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700 transition duration-200"
+                                    >
+                                      <FaEdit />
+                                    </button>
+
+                                    {/* Delete Button */}
+                                    <button
+                                      onClick={() => showModel(category._id)}
+                                      className="bg-red-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-red-700 transition duration-200"
+                                    >
+                                      <FaTrash />
+                                    </button>
+                                  </>
+                                )}
+                              </td>
+                            </tr>
+                          );
+                        })
+                      ) : (
+                        <tr>
+                          <td
+                            colSpan="3"
+                            className="p-3 text-center text-gray-500"
+                          >
+                            No categories found
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                )}
                 <Modal
                   title="Confirm Delete"
                   open={isModalOpen}

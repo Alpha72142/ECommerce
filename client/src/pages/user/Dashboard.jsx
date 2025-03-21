@@ -3,25 +3,33 @@ import UserMenu from "../../components/Layout/UserMenu";
 import { useAuth } from "../../context/auth";
 
 const Dashboard = () => {
-  const [ auth ] = useAuth();
+  const [auth] = useAuth();
   return (
-    <Layout title="Dashboard - Ecommerce app">
-      <div className="container p-4">
-        <div className="flex gap-4">
-          <div className="w-1/4">
+    <Layout title="Dashboard - Ecommerce App">
+      <div className="container p-6">
+        <h1 className="text-4xl font-bold text-gray-900 mb-6">Dashboard</h1>
+        <div className="flex flex-col md:flex-row gap-6">
+          {/* Sidebar */}
+          <div className="w-full md:w-1/4">
             <UserMenu />
           </div>
-          <div className="w-3/4">
-            <div className="mt-2 p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
-              <h3 className="mb-2 text-2xl tracking-tight text-gray-900">
-                Name : {auth?.user?.name}
-              </h3>
-              <h3 className="mb-2 text-2xl tracking-tight text-gray-900">
-                Email : {auth?.user?.email}
-              </h3>
-              <h3 className="mb-2 text-2xl tracking-tight text-gray-900">
-                Contact : {auth?.user?.phone}
-              </h3>
+
+          {/* Main Content */}
+          <div className="w-full md:w-3/4">
+            <div className="bg-white border border-gray-200 rounded-lg shadow-md p-6">
+              <h2 className="text-3xl font-semibold text-gray-900 mb-4">
+                Welcome, {auth?.user?.name}!
+              </h2>
+              <div className="p-4 bg-gray-100 rounded-lg">
+                <p className="text-lg text-gray-700">
+                  <span className="font-semibold">Email:</span>{" "}
+                  {auth?.user?.email}
+                </p>
+                <p className="text-lg text-gray-700 mt-2">
+                  <span className="font-semibold">Contact:</span>{" "}
+                  {auth?.user?.phone}
+                </p>
+              </div>
             </div>
           </div>
         </div>

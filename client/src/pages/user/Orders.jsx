@@ -80,10 +80,23 @@ const Orders = () => {
                             <span className="text-sm font-medium">Buyer:</span>{" "}
                             {order.buyer?.name}
                           </p>
-                          <p>
-                            <span className="text-sm font-medium">Items:</span>{" "}
-                            {order.products?.length}
-                          </p>
+                          <div className="flex gap-4">
+                            <p>
+                              <span className="text-sm font-medium">
+                                Products:
+                              </span>{" "}
+                              {order.products?.length}
+                            </p>
+                            <p>
+                              <span className="text-sm font-medium">
+                                Items:
+                              </span>{" "}
+                              {order.products?.reduce(
+                                (acc, curr) => acc + curr.quantity,
+                                0
+                              )}
+                            </p>
+                          </div>
 
                           <p className="text-green-600 font-bold">
                             <span>Total:</span> ₹
@@ -92,12 +105,12 @@ const Orders = () => {
                         </div>
                       </div>
 
-                      {/* Right: Product Table (RESPONSIVE) */}
+                      {/* Right: Product Table*/}
                       <div className="w-full  lg:w-1/2 mt-4 md:mt-0 lg:pl-6">
                         <div className="overflow-hidden">
-                          <table className="w-full text-xs border-collapse">
+                          <table className="w-full text-xs border border-gray-200">
                             <thead>
-                              <tr className="border-b">
+                              <tr className="border-b border-gray-400 bg-gray-50">
                                 <th className="px-2 py-1 text-left text-[9px] md:text-[12px]">
                                   Product
                                 </th>
@@ -114,17 +127,20 @@ const Orders = () => {
                             </thead>
                             <tbody>
                               {order.products.map((product, i) => (
-                                <tr key={i} className="border-b">
-                                  <td className="px-2 py-1 text-[6px] sm:text-[8px] md:text-[10px]">
+                                <tr
+                                  key={i}
+                                  className="border-b border-gray-200"
+                                >
+                                  <td className="px-2 py-2 text-[6px] sm:text-[8px] md:text-[10px]">
                                     {product.name}
                                   </td>
-                                  <td className="px-2 py-1 text-[6px] sm:text-[8px] md:text-[10px] text-right text-green-600">
+                                  <td className="px-2 py-2 text-[6px] sm:text-[8px] md:text-[10px] text-right text-green-600">
                                     ₹{product.price.toFixed(2)}
                                   </td>
-                                  <td className="px-2 py-1 text-[6px] sm:text-[8px] md:text-[10px] text-right font-semibold">
+                                  <td className="px-2 py-2 text-[6px] sm:text-[8px] md:text-[10px] text-right font-semibold">
                                     x{product.quantity}
                                   </td>
-                                  <td className="px-2 py-1 text-right text-[6px] sm:text-[8px]  md:text-[10px] font-bold">
+                                  <td className="px-2 py-2 text-right text-[6px] sm:text-[8px]  md:text-[10px] font-bold">
                                     ₹
                                     {(product.price * product.quantity).toFixed(
                                       2

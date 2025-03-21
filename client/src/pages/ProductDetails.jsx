@@ -1,19 +1,21 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import Layout from "../components/Layout/Layout";
+import useCartAction from "../components/hooks/useCartAction";
+import { Button } from "antd";
+import { CircularProgress } from "@mui/material";
+
 
 const ProductDetails = () => {
+   const navigate = useNavigate();
   const { slug } = useParams();
   const [product, setProduct] = useState(null);
   const [showMore, setShowMore] = useState(false);
   const [relatedProduct, setRelatedProduct] = useState([]);
-  const [cart, setCart] = useState([]);
-
+ const { addToCart } = useCartAction();
   useEffect(() => {
     if (slug) getProduct();
-    const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
-    setCart(storedCart);
   }, [slug]);
 
   const getSimilarProduct = async (pid, cid) => {
@@ -43,47 +45,9 @@ const ProductDetails = () => {
     }
   };
 
-  const addToCart = (p) => {
-    const existingItemIndex = cart.findIndex((item) => item._id === p._id);
-    let updatedCart = [...cart];
-
-    if (existingItemIndex !== -1) {
-      updatedCart[existingItemIndex].orderQuantity += 1;
-    } else {
-      updatedCart.push({ ...p, orderQuantity: 1 });
-    }
-
-    setCart(updatedCart);
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
-  };
-
-  const updateQuantity = (p, type) => {
-    const existingItemIndex = cart.findIndex((item) => item._id === p._id);
-    let updatedCart = [...cart];
-
-    if (existingItemIndex !== -1) {
-      if (type === "increase") {
-        updatedCart[existingItemIndex].orderQuantity += 1;
-      } else if (type === "decrease") {
-        if (updatedCart[existingItemIndex].orderQuantity > 1) {
-          updatedCart[existingItemIndex].orderQuantity -= 1;
-        } else {
-          updatedCart.splice(existingItemIndex, 1);
-        }
-      }
-      setCart(updatedCart);
-      localStorage.setItem("cart", JSON.stringify(updatedCart));
-    }
-  };
-
-  const getQuantity = (p) => {
-    const item = cart.find((item) => item._id === p._id);
-    return item ? item.orderQuantity : 0;
-  };
-
   if (!product) {
     return (
-      <div className="text-center text-xl font-semibold mt-10">Loading...</div>
+      <div className="h-screen flex justify-center items-center"><CircularProgress/></div>
     );
   }
 
@@ -117,44 +81,101 @@ const ProductDetails = () => {
               </span>
             </p>
             <p className="text-gray-700">
-              {showMore
-                ? product.description
-                : `${product.description.slice(0, 300)}`}
-              <span
-                className="text-blue-600 cursor-pointer font-semibold ml-1"
-                onClick={() => setShowMore(!showMore)}
-              >
-                {showMore ? " Less" : " ...More"}
-              </span>
+              {product.description.length > 300 ? (
+                <>
+                  {showMore
+                    ? product.description
+                    : `${product.description.slice(0, 300)}...`}
+                  <span
+                    className="text-blue-600 cursor-pointer font-semibold ml-1"
+                    onClick={() => setShowMore(!showMore)}
+                  >
+                    {showMore ? " Less" : " More"}
+                  </span>
+                </>
+              ) : (
+                product.description
+              )}
             </p>
 
-            {getQuantity(product) > 0 ? (
-              <div className="flex items-center gap-4">
-                <button
-                  onClick={() => updateQuantity(product, "decrease")}
-                  className="bg-red-500 text-white px-3 py-2 rounded-lg"
-                >
-                  -
-                </button>
-                <span className="text-lg font-semibold">
-                  {getQuantity(product)}
-                </span>
-                <button
-                  onClick={() => updateQuantity(product, "increase")}
-                  className="bg-green-500 text-white px-3 py-2 rounded-lg"
-                >
-                  +
-                </button>
-              </div>
-            ) : (
-              <button
-                onClick={() => addToCart(product)}
-                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition duration-300"
-              >
-                ADD TO CART
-              </button>
-            )}
+            <button
+              onClick={() => addToCart(product)}
+              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg shadow-md transition duration-300"
+            >
+              ADD TO CART
+            </button>
           </div>
+        </div>
+        <div className="mt-12">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-6">
+            Related Products
+          </h2>
+          {relatedProduct.length === 0 ? (
+            <p className="text-gray-600">No related products found.</p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {relatedProduct.map((p) => (
+                <div
+                  key={p._id}
+                  className="bg-white shadow-lg rounded-lg overflow-hidden transition-transform duration-300 hover:scale-105 flex flex-col flex-grow"
+                >
+                  <div className="relative w-full h-[200px] p-2">
+                    <img
+                      src={`${
+                        import.meta.env.VITE_API_URL
+                      }/api/v1/product/product-photo/${p._id}`}
+                      alt={p.name}
+                      className="w-full h-full object-contain p-2"
+                    />
+                    {p.discount > 0 && (
+                      <span className="absolute top-0 right-0 bg-cyan-500 text-white text-xs font-semibold px-2 py-1 rounded-bl-lg">
+                        {p.discount}% OFF
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Product Details */}
+                  <div className="p-4">
+                    <h5 className="text-md font-bold text-gray-600 truncate">
+                      {p.name}
+                    </h5>
+                    <p className="text-sm text-gray-600 mt-1 line-clamp-2">
+                      {p.description}
+                    </p>
+
+                    {/* Pricing */}
+                    <div className="flex items-center gap-2 mt-2">
+                      <span className="text-lg font-bold text-gray-700">
+                        ₹ {Math.round(p.discountPrice)}
+                      </span>
+                      {p.discount > 0 && (
+                        <span className="text-sm text-gray-400 line-through">
+                          ₹ {p.price}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Buttons */}
+                    <div className="flex flex-col sm:flex-row gap-2 mt-4">
+                      <Button
+                        className="text-blue-700 font-medium border-blue-500 hover:bg-blue-100 w-full"
+                        onClick={() => navigate(`/product/${p.slug}`)}
+                      >
+                        More Details
+                      </Button>
+                      <Button
+                        type="primary"
+                        className="w-full"
+                        onClick={() => addToCart(p)}
+                      >
+                        Add to Cart
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </Layout>

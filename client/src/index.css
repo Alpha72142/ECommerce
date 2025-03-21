@@ -60,13 +60,38 @@
   --webkit-box-shadow: 0 8px 6px -6px rgb(183, 183, 183);
 }
 
-
 .font-header {
   font-family: "roboto", sans-serif;
   font-weight: 700;
   letter-spacing: 3px;
 }
 
-.ant-checkbox-inner{
+.ant-checkbox-inner {
   border-radius: 100% !important;
+}
+
+
+.adminOrders .ant-select-selector {
+  background-color: #0092b8 !important;
+  border-radius: 1rem !important;
+  color: white !important;
+  padding: 0.1rem 0.75rem !important;
+  font-size: 11px !important;
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+.adminOrders .ant-select-selector:focus {
+  outline: none !important;
+  border: none !important;
+ 
+}
+.adminOrders .ant-select-selection-item {
+  color: white !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+}
+.adminOrders .optionFontSize{
+    font-size: 9px !important;
+
 }

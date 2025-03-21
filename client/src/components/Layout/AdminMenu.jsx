@@ -41,7 +41,17 @@ const AdminMenu = () => {
       >
         Products
       </NavLink>
-
+      <NavLink
+        to="/dashboard/admin/orders"
+        className={({ isActive }) =>
+          `block w-full px-4 py-2 border-b  cursor-pointer 
+             border-gray-600 
+           hover:bg-cyan-900 hover:text-white 
+           ${isActive ? "bg-cyan-900 text-white" : ""}`
+        }
+      >
+        Orders
+      </NavLink>
       <NavLink
         to="/dashboard/admin/users"
         className={({ isActive }) =>

@@ -40,7 +40,7 @@ const Login = () => {
 
   return (
     <Layout title="Login - Ecommerce App">
-      <div className="flex justify-center items-center min-h-screen bg-gray-100 px-4">
+      <div className="flex justify-center items-center min-h-screen bg-gray-100 px-4 py-4 md:py-2">
         <div className="relative flex flex-col md:flex-row bg-white shadow-lg rounded-2xl max-w-2xl w-full">
           {/* Left Side (Form Section) */}
           <div className="w-full p-4 md:w-1/2 flex flex-col justify-center">

@@ -40,6 +40,14 @@ const userSchema = new mongoose.Schema(
     resetTokenExpire: {
       type: Date,
     },
+    photo: {
+      data: Buffer,
+      contentType: String,
+    },
+    lastActiveAt: {
+      type: Date,
+      default: null,
+    },
   },
   {
     timestamps: true,

@@ -1,11 +1,13 @@
 import { compare } from "bcrypt";
 import userModel from "../models/userModel.js";
 import orderModel from "../models/orderModel.js";
+import productModel from  "../models/productModel.js";
 import { comparePassword, hashPassword } from "./../helpers/authHelper.js";
 import JWT from "jsonwebtoken";
 import { sendOTPEmail } from "./../services/nodemailer.js";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
+import fs from "fs";
 
 export const registerController = async (req, res) => {
   try {
@@ -92,6 +94,8 @@ export const loginController = async (req, res) => {
       });
     }
     //token
+    user.lastActiveAt = new Date();
+    await user.save();
     const token = await JWT.sign({ _id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "7d",
     });
@@ -99,11 +103,14 @@ export const loginController = async (req, res) => {
       success: true,
       message: "Login Successfully",
       user: {
+        _id: user._id,
         name: user.name,
         email: user.email,
         phone: user.phone,
         address: user.address,
         role: user.role,
+        createdAt: user.createdAt,
+        lastActiveAt: user.lastActiveAt,
       },
       token,
     });
@@ -308,7 +315,157 @@ export const getAllOrderController = async (req, res) => {
   }
 };
 
+// update order status
+export const OrderStatusController = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const { status } = req.body;
+    const orders = await orderModel.findByIdAndUpdate(
+      orderId,
+      { status },
+      { new: true }
+    );
+    res.json(orders);
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).send({
+      success: false,
+      message: "Error while updating order status",
+      error,
+    });
+  }
+};
+
 export const testController = (req, res) => {
   res.send("Protected Route");
   console.log("Protected Route");
+};
+
+//photo upload
+export const uploadPhotoController = async (req, res) => {
+  try {
+    const { id } = req.params; // Extract user ID from URL params
+    const { photo } = req.files; // Get uploaded photo
+
+    if (!photo) {
+      return res.status(400).send({ error: "No photo uploaded" });
+    }
+
+    if (photo.size > 1000000) {
+      return res.status(400).send({ error: "Photo should be less than 1MB" });
+    }
+
+    // Find user by ID
+    const user = await userModel.findById(id);
+    if (!user) {
+      return res.status(404).send({ error: "User not found" });
+    }
+
+    // Save the photo
+    user.photo.data = fs.readFileSync(photo.path);
+    user.photo.contentType = photo.type;
+
+    await user.save();
+
+    res.status(201).send({
+      success: true,
+      message: "Photo uploaded successfully",
+      user,
+    });
+  } catch (error) {
+    console.error("Upload photo Error:", error);
+    res.status(500).send({
+      success: false,
+      message: "Error uploading photo",
+      error: error.message,
+    });
+  }
+};
+
+//get user image
+export const getPhotoController = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await userModel.findById(id).select("photo");
+
+    if (!user || !user.photo.data) {
+      return res.status(404).send({ error: "Photo not found" });
+    }
+
+    res.set("Content-Type", user.photo.contentType);
+    return res.send(user.photo.data);
+  } catch (error) {
+    console.error("Get photo Error:", error);
+    res.status(500).send({
+      success: false,
+      message: "Error retrieving photo",
+      error: error.message,
+    });
+  }
+};
+
+// get all users
+export const getUsersController = async (req, res) => {
+  try {
+    const users = await userModel.find(
+      {},
+      "_id name email lastActiveAt createdAt"
+    );
+    res.status(200).send({
+      success: true,
+      message: "Get all users successfully",
+      users,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Error while getting users",
+      error,
+    });
+  }
+};
+
+//get number of users,total revenue ,number of orders, total available product
+
+export const getUsersStatsController = async (req, res) => {
+  try {
+    const totalUsers = await userModel.estimatedDocumentCount();
+    const totalRevenueResult = await orderModel
+      .aggregate([
+        {
+          $match: {
+            "payment.transaction.amount": { $exists: true, $ne: null },
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            totalRevenue: {
+              $sum: { $toDouble: "$payment.transaction.amount" },
+            },
+          },
+        },
+      ])
+      
+    
+    const totalOrders = await orderModel.estimatedDocumentCount();
+    const totalProducts = await productModel.estimatedDocumentCount();
+
+    res.status(200).send({
+      success: true,
+      totalUsers,
+      totalRevenue: totalRevenueResult.length > 0 ? totalRevenueResult[0].totalRevenue : 0,
+      totalOrders,
+      totalProducts,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({
+      success: false,
+      message: "Error while getting users stats",
+      error,
+    });
+  }
 };

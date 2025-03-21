@@ -1,24 +1,23 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import logo from "../../assets/shopping_ogo.jpg";
+import avatar from "../../assets/default-avatar.png";
 import { useAuth } from "../../context/auth";
 import { toast } from "react-hot-toast";
 import { FiLogOut } from "react-icons/fi";
 import SearchInput from "../Form/SearchInput";
 import useCategory from "../hooks/useCategory";
 import Badge from "@mui/material/Badge";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import LoginIcon from "@mui/icons-material/Login";
-import HowToRegIcon from "@mui/icons-material/HowToReg";
 import { useCart } from "../../context/cart";
+import axios from "axios";
 const Header = () => {
   const [auth, setAuth] = useAuth();
   const [cart] = useCart();
   const categories = useCategory();
   const [isOpen, setIsOpen] = useState(false);
-  const [isDropOpen, setIsDropOpen] = useState(false);
   const [isUserOpen, setIsUserOpen] = useState(false);
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+  const [userImage, setUserImage] = useState([]);
   const navigate = useNavigate();
 
   const menuRef = useRef(null);
@@ -41,14 +40,67 @@ const Header = () => {
     }
   }, []);
 
-
   const closeMenu = () => {
     setIsOpen(false);
-    setIsDropOpen(false);
     setIsUserOpen(false);
     setIsCategoryOpen(false);
   };
 
+  // upload image
+  const upload = async (e) => {
+    try {
+      const file = e.target.files[0];
+      if (!file) return;
+      //checking photo size
+      if (file.size > 1000000) {
+        toast.error("Image size should be less than 1MB");
+        return; // Stop function execution
+      }
+      const formData = new FormData();
+      formData.append("photo", file);
+
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/v1/auth/upload-image/${
+          auth?.user._id
+        }`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      if (data.success) {
+        console.log("Image uploaded successfully");
+        getUserImage();
+      }
+    } catch (error) {
+      console.log("Error uploading image:", error);
+    }
+  };
+
+  //get the image
+  const getUserImage = async () => {
+    try {
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/v1/auth/user-photo/${
+          auth?.user._id
+        }`,
+        { responseType: "blob" } // Ensure image is received as a blob
+      );
+
+      const imageUrl = URL.createObjectURL(data);
+      setUserImage(imageUrl);
+    } catch (error) {
+      console.log("Error retrieving image:", error);
+    }
+  };
+  useEffect(() => {
+    if (auth?.user) {
+      getUserImage();
+    }
+  }, []);
   const handleLogout = () => {
     setAuth({ ...auth, user: null, token: "" });
     localStorage.removeItem("auth");
@@ -134,11 +186,38 @@ const Header = () => {
                   className="relative inline-flex items-center justify-center w-10 h-10 overflow-hidden rounded-full bg-gray-600 cursor-pointer"
                 >
                   <span className="font-medium text-gray-300">
-                    {auth?.user.name[0]}
+                    <img
+                      src={userImage}
+                      alt="Avatar"
+                      className="w-13 h-13 rounded-full object-cover border border-gray-300"
+                    />
                   </span>
                 </div>
                 {isUserOpen && (
-                  <div className="absolute right-2 z-10 mt-2 w-56 origin-top-right rounded-md bg-white ring-1 shadow-lg ring-black/5">
+                  <div className="absolute right-2 z-10 mt-2 w-56 origin-top-right rounded-md bg-white ring-1 shadow-lg ring-black/5 p-4">
+                    <div className="flex flex-col items-center pb-3 border-b">
+                      <label htmlFor="avatar" className="cursor-pointer">
+                        <img
+                          src={userImage}
+                          alt="Avatar"
+                          className="w-16 h-16 rounded-full object-cover border border-gray-300"
+                        />
+                      </label>
+                      <input
+                        type="file"
+                        id="avatar"
+                        className="hidden"
+                        onChange={upload}
+                      />
+
+                      <p className="mt-2 text-sm font-semibold text-gray-900">
+                        {auth?.user.name}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {auth?.user.email}
+                      </p>
+                    </div>
+
                     <NavLink
                       to={`/dashboard/${
                         auth?.user?.role === 1 ? "admin" : "user"
@@ -169,6 +248,9 @@ const Header = () => {
           ☰
         </button>
       </div>
+      <div className="lg:hidden lg:w-full">
+        <SearchInput className={"w-[full]"} />
+      </div>
 
       {/* Mobile Sidebar Menu */}
       <div
@@ -179,7 +261,46 @@ const Header = () => {
         <button className="absolute top-4 right-4 text-2xl" onClick={closeMenu}>
           ✖
         </button>
-        <ul className="flex flex-col p-6 gap-4">
+
+       
+          <div className="flex flex-col items-center mt-6 mb-4">
+            <div className="w-16 h-16 bg-gray-600 text-white flex items-center justify-center rounded-full text-xl font-bold border-2 border-b">
+              <label htmlFor="avatar" className="cursor-pointer">
+                <img
+                  src={auth?.user ? (userImage) : (avatar)}
+                  alt="Avatar"
+                  className="w-16 h-16 rounded-full object-cover border border-gray-300"
+                />
+              </label>
+              <input
+                type="file"
+                id="avatar"
+                className="hidden"
+                onChange={upload}
+              />
+            </div>
+            <span className="mt-2 text-sm font-medium text-gray-700">
+              {auth?.user?.name || "GUEST"}
+            </span>
+            <span className="mt-2 text-sm font-medium text-gray-700">
+              {auth?.user?.email}
+            </span>
+            <hr className="border-1 border-gray-300 my-3 w-full" />
+          </div>
+        
+
+        <ul className="flex flex-col p-6 gap-4 mt-10">
+          {auth?.user && (
+            <li className="p-1 text-sm text-slate-600">
+              <NavLink
+                to={`/dashboard/${auth?.user?.role === 1 ? "admin" : "user"}`}
+                onClick={closeMenu}
+              >
+                Dashboard
+              </NavLink>
+            </li>
+          )}
+
           <li className="p-1 text-sm text-slate-600">
             <NavLink to="/" onClick={closeMenu}>
               Home
@@ -208,12 +329,17 @@ const Header = () => {
                 />
               </svg>
             </span>
-            {/* Category Dropdown (Mobile) */}
             <div
               className={`overflow-hidden transition-all duration-300 ${
                 isCategoryOpen ? "max-h-100" : "max-h-0"
               }`}
             >
+              <Link
+                to={`/categories`}
+                className="block text-[14px] font-medium px-4 py-2 text-gray-900  hover:bg-gray-100"
+              >
+                All CATEGORY
+              </Link>
               {categories.map((category) => (
                 <Link
                   key={category._id}
@@ -228,7 +354,18 @@ const Header = () => {
           </li>
           <li className="p-1 text-sm text-slate-600">
             <NavLink to="/cart" onClick={closeMenu}>
-              Cart (0)
+              <Badge
+                badgeContent={cart.length}
+                color="primary"
+                id="basic-button"
+                aria-controls={open ? "basic-menu" : undefined}
+                aria-haspopup="true"
+                aria-hidden={open ? "false" : "true"}
+                aria-expanded={open ? "true" : undefined}
+                // onClick={handleClick}
+              >
+                Cart
+              </Badge>
             </NavLink>
           </li>
           {!auth?.user ? (
@@ -251,7 +388,7 @@ const Header = () => {
                   handleLogout();
                   closeMenu();
                 }}
-                className="w-full text-left"
+                className="w-full text-left flex justify-between items-center"
               >
                 Logout <FiLogOut />
               </button>

@@ -383,7 +383,7 @@ export const brainTreePaymentController = async (req, res) => {
     const { cart, nonce } = req.body;
     let total = 0;
     cart.map((i) => (total += i.price));
-    
+
     let newTransaction = gateway.transaction.sale(
       {
         amount: total,
@@ -413,3 +413,5 @@ export const brainTreePaymentController = async (req, res) => {
     console.log(error);
   }
 };
+
+

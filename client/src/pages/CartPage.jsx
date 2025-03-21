@@ -84,7 +84,7 @@ const CartPage = () => {
           </p>
         </div>
 
-        <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* Cart Items */}
           <div className="md:col-span-2 bg-white p-6 shadow-lg rounded-lg">
             <h2 className="text-lg md:text-2xl font-semibold text-gray-800 mb-4">
@@ -95,7 +95,7 @@ const CartPage = () => {
                 {cart.map((item) => (
                   <li
                     key={item._id}
-                    className="flex flex-col md:flex-row md:items-center justify-between p-4 border rounded-lg shadow-sm bg-gray-50"
+                    className="flex flex-col md:flex-row md:items-center justify-between p-4 border border-gray-300 rounded-lg"
                   >
                     <div className="flex items-center flex-wrap">
                       <img
@@ -103,13 +103,13 @@ const CartPage = () => {
                           import.meta.env.VITE_API_URL
                         }/api/v1/product/product-photo/${item._id}`}
                         alt={item.name}
-                        className="w-20 h-20 object-cover rounded-md"
+                        className="w-20 h-20 object-content p-2 rounded-md"
                       />
-                      <div className="ml-4">
+                      <div className="ml-4 w-[75%]">
                         <h3 className="text-base md:text-lg font-semibold">
                           {item.name}
                         </h3>
-                        <p className="w-120 text-gray-400 text-xs md:text-sm line-clamp-2">
+                        <p className="w-full text-gray-400 text-xs md:text-sm line-clamp-2">
                           {item.description}
                         </p>
                         <p className="text-gray-600">
@@ -123,7 +123,7 @@ const CartPage = () => {
                         <button
                           onClick={() => updateQuantity(item._id, -1)}
                           disabled={item.orderQuantity <= 1}
-                          className="bg-gray-100 hover:bg-gray-200 p-2 h-9"
+                          className="bg-gray-100 hover:bg-gray-200 p-3 h-9 flex items-center"
                         >
                           -
                         </button>
@@ -131,11 +131,11 @@ const CartPage = () => {
                           type="text"
                           value={item.orderQuantity}
                           readOnly
-                          className="bg-gray-50 border-x-0 h-9 text-center w-full"
+                          className="bg-gray-50 border-x-0 h-9 text-center w-9"
                         />
                         <button
                           onClick={() => updateQuantity(item._id, 1)}
-                          className="bg-gray-100 hover:bg-gray-200 p-2 h-9"
+                          className="bg-gray-100 hover:bg-gray-200 p-3 h-9 flex items-center"
                         >
                           +
                         </button>

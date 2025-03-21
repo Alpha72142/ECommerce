@@ -4,9 +4,11 @@ import Layout from "../../components/Layout/Layout";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const Products = () => {
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   // Fetch all products
   const getAllProducts = async () => {
@@ -18,6 +20,8 @@ const Products = () => {
     } catch (error) {
       console.log(error);
       toast.error("Something went wrong while getting products");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -41,41 +45,47 @@ const Products = () => {
                 All Product List
               </h3>
 
-              {/* Product Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-                {products.length > 0 ? (
-                  products.map((p) => (
-                    <Link
-                      to={`/dashboard/admin/product/${p.slug}`}
-                      key={p._id}
-                      className="rounded-lg bg-gray-100 border border-gray-200 hover:shadow-lg transition-transform duration-300 hover:scale-[1.02]"
-                    >
-                      <div className="relative h-40 bg-white rounded-t-lg flex justify-center items-center p-2">
-                        <img
-                          className="rounded-t-lg h-full w-auto object-contain"
-                          src={`${
-                            import.meta.env.VITE_API_URL
-                          }/api/v1/product/product-photo/${
-                            p._id
-                          }?t=${Date.now()}`}
-                          alt={p.name}
-                        />
-                      </div>
+              {/* Loading Spinner */}
+              {loading ? (
+                <div className="flex justify-center items-center h-40">
+                  <CircularProgress />
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+                  {products.length > 0 ? (
+                    products.map((p) => (
+                      <Link
+                        to={`/dashboard/admin/product/${p.slug}`}
+                        key={p._id}
+                        className="rounded-lg bg-gray-100 border border-gray-200 hover:shadow-lg transition-transform duration-300 hover:scale-[1.02]"
+                      >
+                        <div className="relative h-40 bg-white rounded-t-lg flex justify-center items-center p-2">
+                          <img
+                            className="rounded-t-lg h-full w-auto object-contain"
+                            src={`${
+                              import.meta.env.VITE_API_URL
+                            }/api/v1/product/product-photo/${
+                              p._id
+                            }?t=${Date.now()}`}
+                            alt={p.name}
+                          />
+                        </div>
 
-                      <div className="p-4">
-                        <h5 className="mb-2 text-md font-bold text-gray-600 truncate">
-                          {p.name}
-                        </h5>
-                        <p className="text-sm text-gray-500 h-14 overflow-hidden">
-                          {p.description.substring(0, 60)}...
-                        </p>
-                      </div>
-                    </Link>
-                  ))
-                ) : (
-                  <p className="text-center text-gray-500">No Products</p>
-                )}
-              </div>
+                        <div className="p-4">
+                          <h5 className="mb-2 text-md font-bold text-gray-600 truncate">
+                            {p.name}
+                          </h5>
+                          <p className="text-sm text-gray-500 h-14 overflow-hidden">
+                            {p.description.substring(0, 60)}...
+                          </p>
+                        </div>
+                      </Link>
+                    ))
+                  ) : (
+                    <p className="text-center text-gray-500">No Products</p>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>

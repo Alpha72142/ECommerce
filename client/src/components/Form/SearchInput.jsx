@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useSearch } from "../../context/search";
 import axios from "axios";
 
-const SearchInput = () => {
+const SearchInput = ({className}) => {
   const [values, setValues] = useSearch();
   const navigate = useNavigate();
 
@@ -15,7 +15,6 @@ const SearchInput = () => {
         }`
       );
       setValues({ ...values, results: data });
-      console.log(data);
       navigate("/search");
     } catch (error) {
       console.error(error);
@@ -25,7 +24,7 @@ const SearchInput = () => {
   return (
     <div>
       <form
-        className="flex items-center max-w-sm mx-auto"
+        className={`flex items-center max-w- mx-auto ${className}`}
         onSubmit={handleSubmit}
       >
         <label htmlFor="simple-search" className="sr-only">
