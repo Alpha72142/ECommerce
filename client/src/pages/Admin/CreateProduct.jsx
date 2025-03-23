@@ -83,7 +83,7 @@ const CreateProduct = () => {
 
           {/* Main Content */}
           <div className="w-full md:w-3/4">
-            <div className="mt-2 p-6 bg-white border border-gray-200 rounded-lg shadow-lg">
+            <div className="p-6 bg-white rounded-lg shadow-lg">
               <div className="flex flex-col md:flex-row justify-between items-center">
                 <h3 className="text-3xl font-semibold text-gray-800">
                   Create Product

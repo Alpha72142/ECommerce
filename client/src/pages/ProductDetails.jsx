@@ -6,14 +6,15 @@ import useCartAction from "../components/hooks/useCartAction";
 import { Button } from "antd";
 import { CircularProgress } from "@mui/material";
 
-
 const ProductDetails = () => {
-   const navigate = useNavigate();
+  const navigate = useNavigate();
   const { slug } = useParams();
   const [product, setProduct] = useState(null);
   const [showMore, setShowMore] = useState(false);
   const [relatedProduct, setRelatedProduct] = useState([]);
- const { addToCart } = useCartAction();
+  const { addToCart } = useCartAction();
+  const API_URL = import.meta.env.VITE_API_URL;
+
   useEffect(() => {
     if (slug) getProduct();
   }, [slug]);
@@ -21,9 +22,7 @@ const ProductDetails = () => {
   const getSimilarProduct = async (pid, cid) => {
     try {
       const { data } = await axios.get(
-        `${
-          import.meta.env.VITE_API_URL
-        }/api/v1/product/related-product/${pid}/${cid}`
+        `${API_URL}/api/v1/product/related-product/${pid}/${cid}`
       );
       setRelatedProduct(data?.products || []);
     } catch (error) {
@@ -34,9 +33,7 @@ const ProductDetails = () => {
   const getProduct = async () => {
     try {
       const { data } = await axios.get(
-        `${
-          import.meta.env.VITE_API_URL
-        }/api/v1/product/get-single-product/${slug}`
+        `${API_URL}/api/v1/product/get-single-product/${slug}`
       );
       setProduct(data?.product);
       getSimilarProduct(data?.product._id, data?.product.category._id);
@@ -47,7 +44,9 @@ const ProductDetails = () => {
 
   if (!product) {
     return (
-      <div className="h-screen flex justify-center items-center"><CircularProgress/></div>
+      <div className="h-screen flex justify-center items-center">
+        <CircularProgress />
+      </div>
     );
   }
 
@@ -58,9 +57,7 @@ const ProductDetails = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-white shadow-lg rounded-2xl p-6">
           <div className="flex justify-center">
             <img
-              src={`${
-                import.meta.env.VITE_API_URL
-              }/api/v1/product/product-photo/${product._id}`}
+              src={`${API_URL}/api/v1/product/product-photo/${product._id}`}
               alt={product.name}
               className="rounded-xl max-h-96 w-auto object-contain"
             />
@@ -121,9 +118,7 @@ const ProductDetails = () => {
                 >
                   <div className="relative w-full h-[200px] p-2">
                     <img
-                      src={`${
-                        import.meta.env.VITE_API_URL
-                      }/api/v1/product/product-photo/${p._id}`}
+                      src={`${API_URL}/api/v1/product/product-photo/${p._id}`}
                       alt={p.name}
                       className="w-full h-full object-contain p-2"
                     />

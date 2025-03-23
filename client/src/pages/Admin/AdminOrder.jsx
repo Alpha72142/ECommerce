@@ -52,15 +52,15 @@ const AdminOrder = () => {
 
   return (
     <Layout title="Dashboard - orders">
-      <div className="container adminOrders mx-auto p-4">
-        <div className="flex flex-col md:flex-row gap-6">
+      <div className="container adminOrders p-4">
+        <div className="flex flex-col md:flex-row gap-4">
           {/* Sidebar */}
           <div className="w-full md:w-1/4">
             <AdminMenu />
           </div>
           {/* Main Content */}
           <div className="w-full md:w-3/4 bg-white shadow-md rounded-lg p-6">
-            <h3 className="text-2xl font-semibold text-gray-800 mb-4">
+            <h3 className="text-3xl font-semibold text-gray-800 mb-4">
               Orders
             </h3>
             {loading ? (

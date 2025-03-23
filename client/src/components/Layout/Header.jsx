@@ -19,6 +19,7 @@ const Header = () => {
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [userImage, setUserImage] = useState([]);
   const navigate = useNavigate();
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const menuRef = useRef(null);
 
@@ -73,33 +74,18 @@ const Header = () => {
 
       if (data.success) {
         console.log("Image uploaded successfully");
-        getUserImage();
+        toast.success("Image uploaded successfully");
+        setUserImage(
+          `${import.meta.env.VITE_API_URL}/api/v1/auth/user-photo/${
+            auth?.user._id
+          }?t=${new Date().getTime()}`
+        );
       }
     } catch (error) {
       console.log("Error uploading image:", error);
     }
   };
 
-  //get the image
-  const getUserImage = async () => {
-    try {
-      const { data } = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/v1/auth/user-photo/${
-          auth?.user._id
-        }`,
-        { responseType: "blob" } // Ensure image is received as a blob
-      );
-
-      const imageUrl = URL.createObjectURL(data);
-      setUserImage(imageUrl);
-    } catch (error) {
-      console.log("Error retrieving image:", error);
-    }
-  };
-  useEffect(() => {  
-      getUserImage();
-    
-  }, []);
   const handleLogout = () => {
     setAuth({ ...auth, user: null, token: "" });
     localStorage.removeItem("auth");
@@ -186,7 +172,9 @@ const Header = () => {
                 >
                   <span className="font-medium text-gray-300">
                     <img
-                      src={userImage}
+                      src={`${API_URL}/api/v1/auth/user-photo/${
+                        auth?.user._id
+                      }?t=${new Date().getTime()}`}
                       alt="Avatar"
                       className="w-13 h-13 rounded-full object-cover border border-gray-300"
                     />
@@ -197,7 +185,9 @@ const Header = () => {
                     <div className="flex flex-col items-center pb-3 border-b">
                       <label htmlFor="avatar" className="cursor-pointer">
                         <img
-                          src={userImage}
+                          src={`${API_URL}/api/v1/auth/user-photo/${
+                            auth?.user._id
+                          }?t=${new Date().getTime()}`}
                           alt="Avatar"
                           className="w-16 h-16 rounded-full object-cover border border-gray-300"
                         />
@@ -261,32 +251,36 @@ const Header = () => {
           ✖
         </button>
 
-       
-          <div className="flex flex-col items-center mt-6 mb-4">
-            <div className="w-16 h-16 bg-gray-600 text-white flex items-center justify-center rounded-full text-xl font-bold border-2 border-b">
-              <label htmlFor="avatar" className="cursor-pointer">
-                <img
-                  src={auth?.user ? (userImage) : (avatar)}
-                  alt="Avatar"
-                  className="w-16 h-16 rounded-full object-cover border border-gray-300"
-                />
-              </label>
-              <input
-                type="file"
-                id="avatar"
-                className="hidden"
-                onChange={upload}
+        <div className="flex flex-col items-center mt-6 mb-4">
+          <div className="w-16 h-16 bg-gray-600 text-white flex items-center justify-center rounded-full text-xl font-bold border-2 border-b">
+            <label htmlFor="avatar" className="cursor-pointer">
+              <img
+                src={
+                  auth?.user
+                    ? `${import.meta.env.VITE_API_URL}/api/v1/auth/user-photo/${
+                        auth?.user._id
+                      }?t=${new Date().getTime()}`
+                    : avatar
+                }
+                alt="Avatar"
+                className="w-16 h-16 rounded-full object-cover border border-gray-300"
               />
-            </div>
-            <span className="mt-2 text-sm font-medium text-gray-700">
-              {auth?.user?.name || "GUEST"}
-            </span>
-            <span className="mt-2 text-sm font-medium text-gray-700">
-              {auth?.user?.email}
-            </span>
-            <hr className="border-1 border-gray-300 my-3 w-full" />
+            </label>
+            <input
+              type="file"
+              id="avatar"
+              className="hidden"
+              onChange={upload}
+            />
           </div>
-        
+          <span className="mt-2 text-sm font-medium text-gray-700">
+            {auth?.user?.name || "GUEST"}
+          </span>
+          <span className="mt-2 text-sm font-medium text-gray-700">
+            {auth?.user?.email}
+          </span>
+          <hr className="border-1 border-gray-300 my-3 w-full" />
+        </div>
 
         <ul className="flex flex-col p-6 gap-4 mt-10">
           {auth?.user && (

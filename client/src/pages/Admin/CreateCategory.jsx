@@ -20,11 +20,13 @@ const CreateCategory = () => {
   const [deleteId, setDeleteId] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const API_URL = import.meta.env.VITE_API_URL;
+
   // Fetch categories
   const getAllCategory = async () => {
     try {
       const { data } = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/v1/category/get-category`
+        `${API_URL}/api/v1/category/get-category`
       );
 
       if (data?.success) {
@@ -53,7 +55,7 @@ const CreateCategory = () => {
       }
 
       const { data } = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/v1/category/create-category`,
+        `${API_URL}/api/v1/category/create-category`,
         categoryData
       );
 
@@ -89,7 +91,7 @@ const CreateCategory = () => {
       }
 
       const { data } = await axios.put(
-        `${import.meta.env.VITE_API_URL}/api/v1/category/update-category/${id}`,
+        `${API_URL}/api/v1/category/update-category/${id}`,
         formData
       );
 
@@ -130,9 +132,7 @@ const CreateCategory = () => {
 
     try {
       const { data } = await axios.delete(
-        `${
-          import.meta.env.VITE_API_URL
-        }/api/v1/category/delete-category/${deleteId}`
+        `${API_URL}/api/v1/category/delete-category/${deleteId}`
       );
 
       if (data.success) {
@@ -161,7 +161,7 @@ const CreateCategory = () => {
 
           {/* Main Content */}
           <div className="w-full md:w-3/4">
-            <div className="bg-white p-6 mt-2 rounded-lg shadow-lg">
+            <div className="bg-white p-6 rounded-lg shadow-lg">
               {/* Header with Search Box */}
               <div className="flex flex-col md:flex-row justify-between items-center pb-4 mb-4 gap-2">
                 <h3 className="text-2xl md:text-3xl font-semibold text-gray-800">
@@ -225,9 +225,7 @@ const CreateCategory = () => {
                                       ) : category.photo ? (
                                         // Show existing category image if no new image selected
                                         <img
-                                          src={`${
-                                            import.meta.env.VITE_API_URL
-                                          }/api/v1/category/category-photo/${
+                                          src={`${API_URL}/api/v1/category/category-photo/${
                                             category._id
                                           }?t=${Date.now()}`}
                                           alt="category_image"
@@ -250,9 +248,7 @@ const CreateCategory = () => {
                                   </>
                                 ) : (
                                   <img
-                                    src={`${
-                                      import.meta.env.VITE_API_URL
-                                    }/api/v1/category/category-photo/${
+                                    src={`${API_URL}/api/v1/category/category-photo/${
                                       category._id
                                     }?t=${Date.now()}`}
                                     alt="category_image"

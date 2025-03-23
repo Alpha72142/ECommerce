@@ -9,13 +9,12 @@ import CircularProgress from "@mui/material/CircularProgress";
 const Products = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const API_URL = import.meta.env.VITE_API_URL;
 
   // Fetch all products
   const getAllProducts = async () => {
     try {
-      const { data } = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/v1/product/get-product`
-      );
+      const { data } = await axios.get(`${API_URL}/api/v1/product/get-product`);
       setProducts(data.products);
     } catch (error) {
       console.log(error);
@@ -40,8 +39,8 @@ const Products = () => {
 
           {/* Main Content */}
           <div className="w-full md:w-3/4">
-            <div className="mt-2 p-6 bg-white border border-gray-200 rounded-lg shadow-lg">
-              <h3 className="text-2xl font-semibold text-gray-800">
+            <div className="p-6 bg-white  rounded-lg shadow-lg">
+              <h3 className="text-3xl  font-semibold text-gray-800">
                 All Product List
               </h3>
 
@@ -62,9 +61,7 @@ const Products = () => {
                         <div className="relative h-40 bg-white rounded-t-lg flex justify-center items-center p-2">
                           <img
                             className="rounded-t-lg h-full w-auto object-contain"
-                            src={`${
-                              import.meta.env.VITE_API_URL
-                            }/api/v1/product/product-photo/${
+                            src={`${API_URL}/api/v1/product/product-photo/${
                               p._id
                             }?t=${Date.now()}`}
                             alt={p.name}

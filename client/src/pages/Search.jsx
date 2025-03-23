@@ -6,6 +6,7 @@ import { Button } from "antd";
 
 const Search = () => {
   const [values] = useSearch();
+  const API_URL = import.meta.env.VITE_API_URL;
 
   return (
     <Layout title="Search Results">
@@ -18,7 +19,6 @@ const Search = () => {
               className="flex items-center gap-2 text-gray-600 hover:text-gray-900 px-4 py-2 transition"
             >
               <IoArrowBackSharp className="text-lg" />
-
             </Link>
           </div>
           <div className="text-center mb-6 mx-auto">
@@ -41,9 +41,7 @@ const Search = () => {
               {/* Product Image */}
               <div className="relative w-full h-48 bg-white flex items-center justify-center">
                 <img
-                  src={`${
-                    import.meta.env.VITE_API_URL
-                  }/api/v1/product/product-photo/${p._id}`}
+                  src={`${API_URL}/api/v1/product/product-photo/${p._id}`}
                   alt={p.name}
                   className="w-full h-full object-contain p-4"
                 />

@@ -16,12 +16,13 @@ const CartPage = () => {
   const [showPayment, setShowPayment] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const getToken = async () => {
       try {
         const { data } = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/v1/product/braintree/token`
+          `${API_URL}/api/v1/product/braintree/token`
         );
         setClientToken(data?.clientToken);
       } catch (error) {
@@ -36,7 +37,7 @@ const CartPage = () => {
       setLoading(true);
       const { nonce } = await instance.requestPaymentMethod();
       const { data } = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/v1/product/braintree/payment`,
+        `${API_URL}/api/v1/product/braintree/payment`,
         { nonce, cart }
       );
       setLoading(false);
@@ -99,9 +100,7 @@ const CartPage = () => {
                   >
                     <div className="flex items-center flex-wrap">
                       <img
-                        src={`${
-                          import.meta.env.VITE_API_URL
-                        }/api/v1/product/product-photo/${item._id}`}
+                        src={`${API_URL}/api/v1/product/product-photo/${item._id}`}
                         alt={item.name}
                         className="w-20 h-20 object-content p-2 rounded-md"
                       />

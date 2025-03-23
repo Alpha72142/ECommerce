@@ -10,109 +10,107 @@ import { Modal, Select } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 
 const UpdateProduct = () => {
- const navigate = useNavigate();
- const params = useParams();
- const [categories, setCategories] = useState([]);
- const [name, setName] = useState("");
- const [description, setDescription] = useState("");
- const [price, setPrice] = useState("");
- const [discount, setDiscount] = useState("");
- const [category, setCategory] = useState("");
- const [quantity, setQuantity] = useState("");
- const [shipping, setShipping] = useState(false);
- const [photo, setPhoto] = useState(null);
- const dropdownRef = useRef(null);
- const [isDropOpen, setIsDropOpen] = useState(false);
- const [isShippingDropdownOpen, setIsShippingDropdownOpen] = useState(false);
- const [id, setId] = useState("");
- const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
+  const params = useParams();
+  const [categories, setCategories] = useState([]);
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [price, setPrice] = useState("");
+  const [discount, setDiscount] = useState("");
+  const [category, setCategory] = useState("");
+  const [quantity, setQuantity] = useState("");
+  const [shipping, setShipping] = useState(false);
+  const [photo, setPhoto] = useState(null);
+  const dropdownRef = useRef(null);
+  const [isDropOpen, setIsDropOpen] = useState(false);
+  const [isShippingDropdownOpen, setIsShippingDropdownOpen] = useState(false);
+  const [id, setId] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
- const getSingleProduct = async () => {
-   try {
-     const { data } = await axios.get(
-       `${import.meta.env.VITE_API_URL}/api/v1/product/get-single-product/${
-         params.slug
-       }`
-     );
-     if (data?.product) {
-       setName(data.product.name);
-       setCategory(data.product.category?._id || ""); // Store only _id
-       setId(data.product._id);
-       setDescription(data.product.description);
-       setPrice(data.product.price);
-       setQuantity(data.product.quantity);
-       setDiscount(data.product.discount);
-       setShipping(data.product.shipping);
-     }
-   } catch (error) {
-     console.error(error);
-     toast.error("Error fetching product details");
-   }
- };
+  const API_URL = import.meta.env.VITE_API_URL;
 
- const getAllCategory = async () => {
-   try {
-     const { data } = await axios.get(
-       `${import.meta.env.VITE_API_URL}/api/v1/category/get-category`
-     );
-     if (data?.success) {
-       setCategories(data.category);
-     }
-   } catch (error) {
-     console.error(error);
-     toast.error("Error fetching categories");
-   }
- };
+  const getSingleProduct = async () => {
+    try {
+      const { data } = await axios.get(
+        `${API_URL}/api/v1/product/get-single-product/${params.slug}`
+      );
+      if (data?.product) {
+        setName(data.product.name);
+        setCategory(data.product.category?._id || ""); // Store only _id
+        setId(data.product._id);
+        setDescription(data.product.description);
+        setPrice(data.product.price);
+        setQuantity(data.product.quantity);
+        setDiscount(data.product.discount);
+        setShipping(data.product.shipping);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Error fetching product details");
+    }
+  };
 
- useEffect(() => {
-   getSingleProduct();
-   getAllCategory();
- }, [params.slug]); // Now updates when the product slug changes
+  const getAllCategory = async () => {
+    try {
+      const { data } = await axios.get(
+        `${API_URL}/api/v1/category/get-category`
+      );
+      if (data?.success) {
+        setCategories(data.category);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Error fetching categories");
+    }
+  };
 
- const handleUpdate = async (e) => {
-   e.preventDefault();
-   try {
-     const productData = new FormData();
-     productData.append("name", name);
-     productData.append("description", description);
-     productData.append("price", price);
-     productData.append("discount", discount);
-     productData.append("discountPrice", price - (price * discount) / 100);
-     productData.append("quantity", quantity);
-     productData.append("shipping", shipping ? "true" : "false");
-     if (photo) productData.append("photo", photo);
-     productData.append("category", category);
+  useEffect(() => {
+    getSingleProduct();
+    getAllCategory();
+  }, [params.slug]); // Now updates when the product slug changes
 
-     const { data } = await axios.put(
-       `${import.meta.env.VITE_API_URL}/api/v1/product/update-product/${id}`,
-       productData
-     );
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    try {
+      const productData = new FormData();
+      productData.append("name", name);
+      productData.append("description", description);
+      productData.append("price", price);
+      productData.append("discount", discount);
+      productData.append("discountPrice", price - (price * discount) / 100);
+      productData.append("quantity", quantity);
+      productData.append("shipping", shipping ? "true" : "false");
+      if (photo) productData.append("photo", photo);
+      productData.append("category", category);
 
-     if (data?.success) {
-       toast.success("Product Updated Successfully");
-       navigate("/dashboard/admin/products");
-     } else {
-       toast.error(data?.message);
-     }
-   } catch (error) {
-     console.error(error);
-     toast.error("Something went wrong while updating the product");
-   }
- };
+      const { data } = await axios.put(
+        `${API_URL}/api/v1/product/update-product/${id}`,
+        productData
+      );
 
- const deleteProduct = async () => {
-   try {
-     await axios.delete(
-       `${import.meta.env.VITE_API_URL}/api/v1/product/delete-product/${id}`
-     );
-     toast.success("Product deleted successfully");
-     navigate("/dashboard/admin/products");
-     setIsModalOpen(false);
-   } catch (error) {
-     console.error(error);
-     toast.error("Something went wrong while deleting the product");
-   }
- };
+      if (data?.success) {
+        toast.success("Product Updated Successfully");
+        navigate("/dashboard/admin/products");
+      } else {
+        toast.error(data?.message);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong while updating the product");
+    }
+  };
+
+  const deleteProduct = async () => {
+    try {
+      await axios.delete(`${API_URL}/api/v1/product/delete-product/${id}`);
+      toast.success("Product deleted successfully");
+      navigate("/dashboard/admin/products");
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong while deleting the product");
+    }
+  };
 
   return (
     <Layout title="Dashboard - Create Product">
@@ -125,9 +123,9 @@ const UpdateProduct = () => {
 
           {/* Main Content */}
           <div className="w-full md:w-3/4">
-            <div className="mt-2 p-6 bg-white border border-gray-200 rounded-lg shadow-lg">
+            <div className="p-6 bg-white rounded-lg shadow-lg">
               <div className="flex flex-col md:flex-row justify-between items-center">
-                <h3 className="text-xl md:text-2xl text-gray-900 font-semibold">
+                <h3 className="text-xl md:text-3xl  text-gray-900 font-semibold">
                   Update Product
                 </h3>
 
@@ -182,9 +180,7 @@ const UpdateProduct = () => {
                 ) : (
                   <div className="w-full md:w-1/3 h-48 overflow-hidden border border-gray-300 rounded-lg">
                     <img
-                      src={`${
-                        import.meta.env.VITE_API_URL
-                      }/api/v1/product/product-photo/${id}`}
+                      src={`${API_URL}/api/v1/product/product-photo/${id}`}
                       alt="product_image"
                       className="w-full h-full object-contain"
                     />

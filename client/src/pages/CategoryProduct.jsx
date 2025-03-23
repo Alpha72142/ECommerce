@@ -11,8 +11,9 @@ const CategoryProduct = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [category, setCategory] = useState(null);
-  const [loading, setLoading] = useState(true); 
+  const [loading, setLoading] = useState(true);
   const { addToCart } = useCartAction();
+  const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     if (params?.slug) getProductsByCategory();
@@ -22,9 +23,7 @@ const CategoryProduct = () => {
     setLoading(true); // Start loading
     try {
       const { data } = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/v1/product/product-category/${
-          params.slug
-        }`
+        `${API_URL}/api/v1/product/product-category/${params.slug}`
       );
       setProducts(data?.products || []); // Ensure it's always an array
       setCategory(data?.category || null);
@@ -58,9 +57,7 @@ const CategoryProduct = () => {
                   {/* Product Image with Discount Badge */}
                   <div className="relative w-full h-[200px] p-2">
                     <img
-                      src={`${
-                        import.meta.env.VITE_API_URL
-                      }/api/v1/product/product-photo/${p._id}`}
+                      src={`${API_URL}/api/v1/product/product-photo/${p._id}`}
                       alt={p.name}
                       className="w-full h-full object-contain p-2"
                     />

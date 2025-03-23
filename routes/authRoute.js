@@ -22,7 +22,6 @@ import {
 } from "../middlewares/authMiddleware.js";
 import formidable from "express-formidable";
 
-
 //router object
 const router = express.Router();
 
@@ -44,7 +43,7 @@ router.post("/verify-otp", verifyOTPController);
 // Reset Password
 router.post("/reset-password", resetPasswordController);
 
-//iuser route auth
+//is user route auth
 router.get("/user-auth", requireSignIn, isUser, (req, res) => {
   res.status(200).send({ ok: true });
 });
@@ -73,7 +72,12 @@ router.put(
 );
 
 // upload photo
-router.post("/upload-image/:id", requireSignIn,formidable(), uploadPhotoController);
+router.post(
+  "/upload-image/:id",
+  requireSignIn,
+  formidable(),
+  uploadPhotoController
+);
 
 // get user image
 router.get("/user-photo/:id", getPhotoController);
@@ -82,6 +86,6 @@ router.get("/user-photo/:id", getPhotoController);
 router.get("/users", requireSignIn, isAdmin, getUsersController);
 
 //get number of users,total revenue ,number of orders, total available product
-router.get("/users-stats", requireSignIn, isAdmin, getUsersStatsController); 
+router.get("/users-stats", requireSignIn, isAdmin, getUsersStatsController);
 
 export default router;

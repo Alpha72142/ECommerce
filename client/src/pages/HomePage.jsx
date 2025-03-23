@@ -23,12 +23,15 @@ const HomePage = () => {
 
   const [showFilter, setShowFilter] = useState(false);
   const menuRef = useRef(null);
+
+  const API_URL = import.meta.env.VITE_API_URL;
+
   // Fetch all products
   const getAllProducts = async () => {
     try {
       setLoading(true);
       const { data } = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/v1/product/product-list/${page}`
+        `${API_URL}/api/v1/product/product-list/${page}`
       );
       setLoading(false);
       setProducts(data.products);
@@ -42,7 +45,7 @@ const HomePage = () => {
   const getAllCategory = async () => {
     try {
       const { data } = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/v1/category/get-category`
+        `${API_URL}/api/v1/category/get-category`
       );
 
       if (data?.success) {
@@ -57,7 +60,7 @@ const HomePage = () => {
   const filterProduct = async () => {
     try {
       const { data } = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/v1/product/product-filter`,
+        `${API_URL}/api/v1/product/product-filter`,
         { checked, radio, priceRange }
       );
       setProducts(data?.product);
@@ -70,7 +73,7 @@ const HomePage = () => {
   const getTotal = async (req, res) => {
     try {
       const { data } = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/v1/product/product-count`
+        `${API_URL}/api/v1/product/product-count`
       );
 
       setTotal(data?.total);
@@ -88,7 +91,7 @@ const HomePage = () => {
     try {
       setLoading(true);
       const { data } = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/v1/product/product-list/${page}`
+        `${API_URL}/api/v1/product/product-list/${page}`
       );
       setLoading(false);
       setProducts([...products, ...data?.products]);
@@ -213,7 +216,7 @@ const HomePage = () => {
           </div>
 
           {/* Products Section */}
-          <div className="w-full lg:w-4/5 flex flex-col py-4 pr-2 mx-6">
+          <div className="w-full lg:w-4/5 flex flex-col py-4 mx-6">
             <div className="flex flex-col pb-4 gap-6 ">
               <h3 className="text-xl md:text-2xl font-semibold text-gray-800">
                 Products
@@ -235,9 +238,7 @@ const HomePage = () => {
                   >
                     <div className="relative w-full h-[200px] p-2">
                       <img
-                        src={`${
-                          import.meta.env.VITE_API_URL
-                        }/api/v1/product/product-photo/${p._id}`}
+                        src={`${API_URL}/api/v1/product/product-photo/${p._id}`}
                         alt={p.name}
                         className="w-full h-full object-contain p-2"
                       />

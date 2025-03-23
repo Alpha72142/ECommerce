@@ -27,7 +27,7 @@ const Orders = () => {
 
   return (
     <Layout title="Dashboard - Orders">
-      <div className="container mx-auto p-6">
+      <div className="container mx-auto p-4 sm:p-6 lg:p-4">
         <div className="flex flex-col md:flex-row gap-6">
           {/* Sidebar */}
           <div className="w-full md:w-1/4">

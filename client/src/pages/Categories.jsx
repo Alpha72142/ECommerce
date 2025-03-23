@@ -6,6 +6,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 
 const Categories = () => {
   const categories = useCategory();
+  const API_URL = import.meta.env.VITE_API_URL;
 
   return (
     <Layout>
@@ -22,9 +23,7 @@ const Categories = () => {
               >
                 {/* Category Image */}
                 <img
-                  src={`${
-                    import.meta.env.VITE_API_URL
-                  }/api/v1/category/category-photo/${
+                  src={`${API_URL}/api/v1/category/category-photo/${
                     category._id
                   }?t=${Date.now()}`}
                   alt={category.name}

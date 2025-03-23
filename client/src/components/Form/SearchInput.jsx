@@ -5,14 +5,13 @@ import axios from "axios";
 const SearchInput = ({className}) => {
   const [values, setValues] = useSearch();
   const navigate = useNavigate();
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const { data } = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/v1/product/search/${
-          values.keyword
-        }`
+        `${API_URL}/api/v1/product/search/${values.keyword}`
       );
       setValues({ ...values, results: data });
       navigate("/search");

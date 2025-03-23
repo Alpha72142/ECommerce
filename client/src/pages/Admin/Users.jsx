@@ -39,12 +39,11 @@ const timeAgo = (date) => {
 const Users = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const getUsers = async () => {
     try {
-      const { data } = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/v1/auth/users`
-      );
+      const { data } = await axios.get(`${API_URL}/api/v1/auth/users`);
       if (data.success) {
         setUsers(data.users);
       } else {
@@ -65,7 +64,7 @@ const Users = () => {
   return (
     <Layout title="Dashboard - Users">
       <div className="container mx-auto p-4">
-        <div className="flex flex-col md:flex-row gap-6">
+        <div className="flex flex-col md:flex-row gap-4">
           {/* Sidebar */}
           <div className="md:w-1/4 w-full">
             <AdminMenu />
@@ -73,10 +72,10 @@ const Users = () => {
 
           {/* Users Table */}
           <div className="md:w-3/4 w-full">
-            <div className="p-6 bg-white border border-gray-200 rounded-lg">
+            <div className="p-6 bg-white rounded-lg shadow-md">
               <Typography
                 variant="h4"
-                className="mb-4 text-gray-800 !font-semibold"
+                className="mb-4 text-gray-800 !text-3xl !font-semibold"
               >
                 All Users
               </Typography>
@@ -107,9 +106,7 @@ const Users = () => {
                           <TableCell>
                             <Box className="flex items-center gap-3">
                               <Avatar
-                                src={`${
-                                  import.meta.env.VITE_API_URL
-                                }/api/v1/auth/user-photo/${user._id}`}
+                                src={`${API_URL}/api/v1/auth/user-photo/${user._id}`}
                                 alt={user.name}
                               />
 

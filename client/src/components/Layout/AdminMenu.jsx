@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 const AdminMenu = () => {
   return (
     <div className="w-full text-sm text-center font-medium rounded-lg bg-gray-700 border-gray-600 text-white">
-      <h3 className="my-2 text-2xl tracking-tight text-white">
+      <h3 className="text-2xl tracking-tight text-white">
         <NavLink to="/dashboard/admin">Admin Panel</NavLink>
       </h3>
 
