@@ -96,10 +96,9 @@ const Header = () => {
       console.log("Error retrieving image:", error);
     }
   };
-  useEffect(() => {
-    if (auth?.user) {
+  useEffect(() => {  
       getUserImage();
-    }
+    
   }, []);
   const handleLogout = () => {
     setAuth({ ...auth, user: null, token: "" });
